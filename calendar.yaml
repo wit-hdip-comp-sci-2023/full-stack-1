@@ -1,0 +1,62 @@
+title : Semester 1
+weeks :
+  - 2023-01-01 :
+      title : -1
+      type  : Registration
+  - 2023-01-08 :
+      title : 0
+      type  : Induction
+  - 2023-01-15 :
+      title : 1
+      type  : Tuition
+  - 2023-01-22 :
+      title : 2
+      type  : Tuition
+  - 2023-01-29 :
+      title : 3
+      type  : Tuition
+  - 2023-02-05 :
+      title : Reading 1
+      type  : Reading
+  - 2023-02-12 :
+      title : 4
+      type  : Tuition
+  - 2023-02-19 :
+      title : 5
+      type  : Tuition
+  - 2023-02-26 :
+      title : 6
+      type  : Tuition
+  - 2023-03-05 :
+      title : Reading 2
+      type  : Reading
+  - 2023-03-12 :
+      title : 7
+      type  : Tuition
+  - 2023-03-19 :
+      title : 8
+      type  : Tuition
+  - 2023-03-26 :
+      title : 9
+      type  : Tuition
+  - 2023-04-02 :
+      title : Easter 1
+      type  : Reading
+  - 2023-04-09 :
+      title : Easter 2
+      type  : Reading
+  - 2023-04-16 :
+      title : 10
+      type  : Tuition
+  - 2023-04-23 :
+      title : 11
+      type  : Tuition
+  - 2023-04-30 :
+      title : 12
+      type  : Tuition
+  - 2023-05-07 :
+      title : Reading 4
+      type  : Reading 4
+  - 2023-05-04 :
+      title : Reading 5
+      type  : Reading 5
