@@ -9,7 +9,7 @@ icon:
   type: la:server
   color: 2D5BA6
 ignore:
-  - topic-01-node
+#  - topic-01-node
 # - topic-02-hapi
 # - topic-03-joi
 #  - topic-04-tdd
