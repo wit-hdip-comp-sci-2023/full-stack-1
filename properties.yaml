@@ -4,7 +4,6 @@ youtube: https://www.youtube.com/
 parent: course/wit-hdip-comp-sci-2023
 credits: Eamonn de Leastar
 auth: 1
-hideVideos     : true
 ignorepin: 2125
 icon:
   type: la:server
