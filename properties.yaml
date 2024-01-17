@@ -10,7 +10,7 @@ icon:
   color: 2D5BA6
 ignore:
 #  - topic-01-node
-# - topic-02-hapi
+  - topic-02-hapi
 # - topic-03-joi
 #  - topic-04-tdd
 #  - topic-05-models
