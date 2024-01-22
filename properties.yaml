@@ -11,7 +11,7 @@ icon:
 ignore:
 #  - topic-01-node
 #  - topic-02-hapi
-# - topic-03-joi
+#  - topic-03-joi
 #  - topic-04-tdd
 #  - topic-05-models
 #  - topic-06-apis
@@ -23,7 +23,7 @@ ignore:
 #  - topic-12-svelte-intro
 #  - topic-13-svelte-components
 #  - topic-14-svelte-routing
-# - topic-15-svelte-applications
+#  - topic-15-svelte-applications
 #  - topic-16-svelte-maps
 #  - topic-17-svelte-full-stack
 #  - topic-18-typescript
