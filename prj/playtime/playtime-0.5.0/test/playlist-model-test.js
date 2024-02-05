@@ -36,7 +36,7 @@ suite("Playlist Model tests", () => {
     assertSubset(mozart, playlist);
   });
 
-  test("delete One Playist - success", async () => {
+  test("delete One Playlist - success", async () => {
     const id = testPlaylists[0]._id;
     await db.playlistStore.deletePlaylistById(id);
     const returnedPlaylists = await db.playlistStore.getAllPlaylists();
