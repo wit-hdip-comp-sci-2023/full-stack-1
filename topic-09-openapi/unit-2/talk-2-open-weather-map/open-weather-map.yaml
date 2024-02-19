@@ -1,0 +1,229 @@
+swagger: '2.0'
+info:
+  description: |
+    This is the Open Weather Map API modified by Roland
+    [Learn about OpenWeatherMap](http://www.openweathermap.org)
+
+        NOTE: You will need to create an account with OpenWeatherMap and create an API key.
+  version: 1.0.0
+  title: OpenWeatherMap
+  termsOfService: 'http://openweathermap.org/terms'
+  contact:
+    name: apiteam@swagger.io
+host: api.openweathermap.org
+basePath: /data/2.5
+schemes:
+  - http
+produces:
+  - application/json
+paths:
+  /weather:
+    get:
+      summary: Get current weather
+      description: >
+        The Weather endpoint returns information about the weather for a given
+        location based on parameters
+
+        like geo location, city, zipcode.
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude component of location.
+          required: false
+          type: number
+          format: double
+        - name: lon
+          in: query
+          description: Longitude component of location.
+          required: false
+          type: number
+          format: double
+        - name: q
+          in: query
+          description: 'City name and country code divided by a comma. e.g. Oxford,OH'
+          required: false
+          type: string
+        - name: id
+          in: query
+          description: >-
+            city id's. List can be found at
+            http://bulk.openweathermap.org/sample/
+          required: false
+          type: number
+          format: int64
+        - name: appid
+          in: query
+          description: OAuth ID
+          required: true
+          type: string
+      responses:
+        '200':
+          description: An array of weather forecasts from different cities.
+          schema:
+            $ref: '#/definitions/Forecast'
+        '404':
+          description: 'City not found, incorrect coordinates.'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Forecast:
+    type: object
+    properties:
+      coord:
+        $ref: '#/definitions/Coord'
+      weather:
+        type: array
+        items:
+          $ref: '#/definitions/Weather'
+      base:
+        type: string
+        description: Internal Parameter
+      main:
+        $ref: '#/definitions/Main'
+      wind:
+        $ref: '#/definitions/Wind'
+      clouds:
+        $ref: '#/definitions/Clouds'
+      dt:
+        type: string
+        description: 'Time of data calculation, unic, UTC'
+      sys:
+        $ref: '#/definitions/Sys'
+      id:
+        type: integer
+        format: int64
+        description: City ID
+      name:
+        type: string
+        description: City Name
+      cod:
+        type: integer
+        format: int32
+        description: Internal parameter
+  Coord:
+    type: object
+    properties:
+      lat:
+        type: number
+        format: float
+        description: Latitude of location
+      lon:
+        type: number
+        format: float
+        description: Longitude of location
+  Weather:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+        description: Weather condition id
+      main:
+        type: string
+        description: 'Group of weather parameters (Rain, Snow, Extreme, etc.)'
+      description:
+        type: string
+        description: Weather condition within the group
+      icon:
+        type: string
+        description: Weather icon id (Icons are .png files)
+  Main:
+    type: object
+    properties:
+      temp:
+        type: number
+        format: float
+        description: >-
+          Temperature. Unit default: Kelvin, Metric: Celcius, Imperial:
+          Farenheit
+      pressure:
+        type: integer
+        format: int32
+        description: 'Atmospheric pressure, hPa'
+      humidity:
+        type: integer
+        format: int32
+        description: 'Humidity, %'
+      temp_min:
+        type: number
+        format: double
+        description: >
+          Minimum temperature at the moment. This is deviation from current temp
+          that is possible for 
+
+          large cities and megalopolises geographically expanded. (optional)
+      temp_max:
+        type: number
+        format: int32
+        description: >
+          Maximum temperature at the moment. This is deviation from current temp
+          that is possible for
+
+          large cities and megalopolises geographically expanded. (optional)
+      sea_level:
+        type: integer
+        format: int32
+        description: >-
+          Atmospheric pressure on the sea level, hPa (may not appear if data
+          doesn't exist)
+      grnd_level:
+        type: integer
+        format: int32
+        description: >-
+          Atmospheric pressure on the sea level, hPa (may not appear if data
+          doesn't exist)
+  Wind:
+    type: object
+    properties:
+      speed:
+        type: number
+        format: float
+        description: 'Wind speed. Default: meter/sec, Metric: meter/sec, Imperial: miles/hr'
+      deg:
+        type: integer
+        format: int32
+        description: 'Wind direction, degrees(meteorological)'
+  Clouds:
+    type: object
+    properties:
+      all:
+        type: integer
+        format: int32
+  Sys:
+    type: object
+    properties:
+      type:
+        type: integer
+        format: int32
+        description: Internal parameter
+      id:
+        type: integer
+        format: int32
+        description: Internal parameter
+      message:
+        type: number
+        format: float
+        description: Internal parameter
+      country:
+        type: string
+        description: 'Country code (GB, JP, etc.)'
+      sunrise:
+        type: integer
+        format: int64
+        description: 'Sunset time, unix UTC'
+      sunset:
+        type: integer
+        format: int64
+        description: 'Sunset time, unix UTC'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string

@@ -1,0 +1,38 @@
+{
+  "swagger": "2.0",
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "info": {
+    "title": "Playtime API",
+    "version": "0.1"
+  },
+  "tags": [
+    
+  ],
+  "paths": {
+    "/api/users": {
+      "get": {
+        "summary": "Get all userApi",
+        "operationId": "getApiUsers",
+        "description": "Returns details of all userApi",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "default": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    
+  }
+}

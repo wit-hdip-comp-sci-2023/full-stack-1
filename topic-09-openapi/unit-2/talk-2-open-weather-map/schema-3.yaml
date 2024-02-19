@@ -1,0 +1,106 @@
+swagger: '2.0'
+host: localhost:3000
+basePath: "/"
+schemes:
+- http
+info:
+  title: Playtime API
+  version: '0.1'
+tags: []
+paths:
+  "/api/users":
+    get:
+      summary: Get all userApi
+      operationId: getApiUsers
+      description: Returns details of all userApi
+      tags:
+      - api
+      responses:
+        '200':
+          schema:
+            "$ref": "#/definitions/UserArray"
+          description: Successful
+    post:
+      summary: Create a User
+      operationId: postApiUsers
+      description: Returns the newly created user
+      parameters:
+      - in: body
+        name: body
+        schema:
+          "$ref": "#/definitions/UserDetails"
+      tags:
+      - api
+      responses:
+        '200':
+          schema:
+            "$ref": "#/definitions/UserDetails"
+          description: Successful
+    delete:
+      summary: Delete all userApi
+      operationId: deleteApiUsers
+      description: All userApi removed from Playtime
+      tags:
+      - api
+      responses:
+        default:
+          schema:
+            type: string
+          description: Successful
+  "/api/users/{id}":
+    get:
+      summary: Get a specific user
+      operationId: getApiUsersId
+      description: Returns user details
+      parameters:
+      - type: string
+        x-alternatives:
+        - type: string
+        - type: object
+        name: id
+        in: path
+        required: true
+      tags:
+      - api
+      responses:
+        '200':
+          schema:
+            "$ref": "#/definitions/UserDetails"
+          description: Successful
+definitions:
+  UserDetails:
+    type: object
+    properties:
+      firstName:
+        type: string
+        example: Homer
+      lastName:
+        type: string
+        example: Simpson
+      email:
+        type: string
+        example: homer@simpson.com
+        x-format:
+          email: true
+      password:
+        type: string
+        example: secret
+      _id:
+        type: string
+        x-alternatives:
+        - type: string
+        - "$ref": "#/x-alt-definitions/_id"
+      __v:
+        type: number
+    required:
+    - firstName
+    - lastName
+    - email
+    - password
+  UserArray:
+    type: array
+    items:
+      "$ref": "#/definitions/UserDetails"
+x-alt-definitions:
+  _id:
+    type: object
