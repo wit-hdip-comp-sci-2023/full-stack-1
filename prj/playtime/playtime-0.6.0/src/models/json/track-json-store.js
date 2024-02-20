@@ -18,18 +18,22 @@ export const trackJsonStore = {
 
   async getTracksByPlaylistId(id) {
     await db.read();
-    return db.data.tracks.filter((track) => track.playlistid === id);
+    let t = db.data.tracks.filter((track) => track.playlistid === id);
+    if (t === undefined) t = null;
+    return t;
   },
 
   async getTrackById(id) {
     await db.read();
-    return db.data.tracks.find((track) => track._id === id);
+    let t = db.data.tracks.find((track) => track._id === id);
+    if (t === undefined) t = null;
+    return t;
   },
 
   async deleteTrack(id) {
     await db.read();
     const index = db.data.tracks.findIndex((track) => track._id === id);
-    db.data.tracks.splice(index, 1);
+    if (index !== -1) db.data.tracks.splice(index, 1);
     await db.write();
   },
 
