@@ -5,4 +5,4 @@ icon:
 ---
 12: Deployment
 
-Deplpying to Glitch, Render & Cloud Atlas
+Deploying to Glitch, Render & Cloud Atlas
