@@ -1,0 +1,680 @@
+
+{
+  "swagger": "2.0",
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "info": {
+    "title": "Playtime API",
+    "version": "0.1"
+  },
+  "securityDefinitions": {
+    "jwt": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "jwt": [
+        
+      ]
+    }
+  ],
+  "tags": [
+    
+  ],
+  "paths": {
+    "/api/playlists": {
+      "get": {
+        "summary": "Get all playlists",
+        "operationId": "getApiPlaylists",
+        "description": "Returns all playlists",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/PlaylistArray"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a Playlist",
+        "operationId": "postApiPlaylists",
+        "description": "Returns the newly created playlist",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Playlist"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/PlaylistPlus"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all PlaylistApi",
+        "operationId": "deleteApiPlaylists",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "default": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/tracks": {
+      "get": {
+        "summary": "Get all trackApi",
+        "operationId": "getApiTracks",
+        "description": "Returns all trackApi",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/TrackArray"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all trackApi",
+        "operationId": "deleteApiTracks",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "default": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Get all userApi",
+        "operationId": "getApiUsers",
+        "description": "Returns details of all userApi",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/UserArray"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a User",
+        "operationId": "postApiUsers",
+        "description": "Returns the newly created user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UserDetails"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/UserDetailsPlus"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all userApi",
+        "operationId": "deleteApiUsers",
+        "description": "All userApi removed from Playtime",
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "default": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/playlists/{id}": {
+      "get": {
+        "summary": "Find a Playlist",
+        "operationId": "getApiPlaylistsId",
+        "description": "Returns a playlist",
+        "parameters": [
+          {
+            "type": "string",
+            "x-alternatives": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/PlaylistPlus"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a playlist",
+        "operationId": "deleteApiPlaylistsId",
+        "parameters": [
+          {
+            "type": "string",
+            "x-alternatives": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "default": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/tracks/{id}": {
+      "get": {
+        "summary": "Find a Track",
+        "operationId": "getApiTracksId",
+        "description": "Returns a track",
+        "parameters": [
+          {
+            "type": "string",
+            "x-alternatives": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/TrackPlus"
+            },
+            "description": "Successful"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a track",
+        "operationId": "deleteApiTracksId",
+        "parameters": [
+          {
+            "type": "string",
+            "x-alternatives": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "default": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Get a specific user",
+        "operationId": "getApiUsersId",
+        "description": "Returns user details",
+        "parameters": [
+          {
+            "type": "string",
+            "x-alternatives": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/UserDetailsPlus"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/users/authenticate": {
+      "post": {
+        "summary": "Authenticate  a User",
+        "operationId": "postApiUsersAuthenticate",
+        "description": "If user has valid email/password, create and return a JWT token",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UserCredentials"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/JwtAuth"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    },
+    "/api/playlists/{id}/tracks": {
+      "post": {
+        "summary": "Create a track",
+        "operationId": "postApiPlaylistsIdTracks",
+        "description": "Returns the newly created track",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Track"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/TrackPlus"
+            },
+            "description": "Successful"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "TrackPlus": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Piano Sonata No. 7"
+        },
+        "artist": {
+          "type": "string",
+          "example": "Beethoven"
+        },
+        "duration": {
+          "type": "number",
+          "example": 12
+        },
+        "playlistid": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        },
+        "_id": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        },
+        "__v": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "title",
+        "artist"
+      ]
+    },
+    "TrackArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TrackPlus"
+      }
+    },
+    "PlaylistPlus": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Beethoven Sonatas"
+        },
+        "userid": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        },
+        "tracks": {
+          "$ref": "#/definitions/TrackArray"
+        },
+        "_id": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        },
+        "__v": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "PlaylistArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/PlaylistPlus"
+      }
+    },
+    "UserDetailsPlus": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "homer@simpson.com",
+          "x-format": {
+            "email": true
+          }
+        },
+        "password": {
+          "type": "string",
+          "example": "secret"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Homer"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Simpson"
+        },
+        "_id": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        },
+        "__v": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "email",
+        "password",
+        "firstName",
+        "lastName"
+      ]
+    },
+    "UserArray": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/UserDetailsPlus"
+      }
+    },
+    "Playlist": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Beethoven Sonatas"
+        },
+        "userid": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        },
+        "tracks": {
+          "$ref": "#/definitions/TrackArray"
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "UserDetails": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "homer@simpson.com",
+          "x-format": {
+            "email": true
+          }
+        },
+        "password": {
+          "type": "string",
+          "example": "secret"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Homer"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Simpson"
+        }
+      },
+      "required": [
+        "email",
+        "password",
+        "firstName",
+        "lastName"
+      ]
+    },
+    "UserCredentials": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "homer@simpson.com",
+          "x-format": {
+            "email": true
+          }
+        },
+        "password": {
+          "type": "string",
+          "example": "secret"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "JwtAuth": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "example": "true"
+        },
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJND.g5YmJisIjoiaGYwNTNjAOhE.gCWGmY5-YigQw0DCBo"
+        }
+      },
+      "required": [
+        "success",
+        "token"
+      ]
+    },
+    "Track": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Piano Sonata No. 7"
+        },
+        "artist": {
+          "type": "string",
+          "example": "Beethoven"
+        },
+        "duration": {
+          "type": "number",
+          "example": 12
+        },
+        "playlistid": {
+          "type": "string",
+          "x-alternatives": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/x-alt-definitions/userid"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "artist"
+      ]
+    }
+  },
+  "x-alt-definitions": {
+    "userid": {
+      "type": "object"
+    }
+  }
+}
