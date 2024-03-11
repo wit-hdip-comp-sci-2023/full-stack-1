@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+    <title> Todo using Vanilla JS </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="box has-text-centered">
+        <div class="title"> Simple Todo List</div>
+        <div class="subtitle">Fun things to do</div>
+      </div>
+      <div class="section box">
+        <div class="field is-horizontal">
+          <div class="field-label is-normal">
+            <label class="label">What should I do?</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <p class="control">
+                <input id="todo-id" class="input" type="text" placeholder="Type something...">
+              </p>
+            </div>
+            <button onClick="addTodo()" class="button">Add Todo</button>
+          </div>
+        </div>
+      </div>
+      <div class="section box">
+        <table id="todo-table" class="table is-fullwidth">
+          <thead>
+            <th>Task</th>
+          </thead>
+          <tbody>
+            <tr></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <script src="todo.js" type="text/javascript"></script>
+  </body>
+</html>
