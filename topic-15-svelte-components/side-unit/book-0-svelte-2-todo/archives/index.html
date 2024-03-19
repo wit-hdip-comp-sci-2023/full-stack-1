@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+    <title> Todo using Vanilla JS </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/css/uikit.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit-icons.min.js"></script>
+  </head>
+  <body>
+    <div class="uk-container">
+      <div class="uk-flex uk-flex-center uk-flex-middle uk-margin">
+        <div class="uk-width-2-3@m uk-card-secondary uk-card-default uk-padding-small uk-text-center">
+          <div class="title"> Github Explorer </div>
+          <div class="uk-text-muted uk-text-small">Fun Repos to Explore</div>
+        </div>
+      </div>
+      <div class="uk-width-1-2@m uk-card uk-card-default uk-padding">
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Enter Github Id</legend>
+          <div class="uk-margin">
+            <input id="github-id" class="uk-input" type="text" placeholder="Github ID">
+          </div>
+        </fieldset>
+        <button onClick="fetchRepos()" id="add-btn" class="uk-button uk-button-default">Fetch</button>
+      </div>
+      <table id="repo-table" class="uk-table uk-table-divider">
+        <caption> Repos :</caption>
+        <thead>
+          <tr>
+            <th>Repo Name</th>
+            <th>Description</th>
+            <th>Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr></tr>
+        </tbody>
+      </table>
+    </div>
+    <script src="explorer.js" type="text/javascript"></script>
+  </body>
+</html>
