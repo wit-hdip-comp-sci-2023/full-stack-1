@@ -1,0 +1,28 @@
+<Card title="Donations to date">
+  <table class="table is-fullwidth">
+    <thead>
+      <th>Amount</th>
+      <th>Method</th>
+      <th>Candidate</th>
+      <th>Donor</th>
+    </thead>
+    <tbody>
+      {{#each donations}}
+      <tr>
+        <td>
+          {{amount}}
+        </td>
+        <td>
+          {{method}}
+        </td>
+        <td>
+          {{candidate.lastName}}, {{candidate.firstName}}
+        </td>
+        <td>
+          {{donor}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</Card>

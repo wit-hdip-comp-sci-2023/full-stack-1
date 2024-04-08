@@ -1,0 +1,36 @@
+{
+  "name": "donation-hapi-02",
+  "version": "0.3.0",
+  "description": "",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js ",
+    "dev": "./node_modules/.bin/nodemon src/server.js  --ignore 'src/models/json/*.json'",
+    "lint": "./node_modules/.bin/eslint . --ext .js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5"
+  },
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@hapi/cookie": "^12.0.1",
+    "@hapi/hapi": "^21.3.8",
+    "@hapi/inert": "^7.1.0",
+    "@hapi/vision": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "handlebars": "^4.7.8",
+    "mais-mongoose-seeder": "^1.0.7",
+    "mongoose": "^8.3.0"
+  },
+  "engines": {
+    "node": "16"
+  }
+}
