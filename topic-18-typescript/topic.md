@@ -5,5 +5,5 @@ icon:
 ---
 18: Typescript
 
-Typescript Svelte Applications
+Typescript Hapi Applications
 
