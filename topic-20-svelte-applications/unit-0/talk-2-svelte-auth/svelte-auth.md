@@ -1,0 +1,3 @@
+Svelte Authentication
+
+Incorporate authentication into SvelteKit application
