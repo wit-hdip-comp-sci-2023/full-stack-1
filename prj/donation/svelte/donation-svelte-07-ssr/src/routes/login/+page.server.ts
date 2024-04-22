@@ -1,6 +1,5 @@
 import { dev } from "$app/environment";
 import { donationService } from "$lib/services/donation-service";
-import { currentSession } from "$lib/stores.js";
 import { redirect } from "@sveltejs/kit";
 
 export const actions = {
@@ -15,7 +14,7 @@ export const actions = {
       const session = await donationService.login(email, password);
 
       if (session) {
-        currentSession.set(session);
+        // currentSession.set(session);
         const userJson = JSON.stringify(session);
         cookies.set("donation-user", userJson, {
           path: "/",
