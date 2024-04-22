@@ -1,0 +1,35 @@
+<form action="/donate" method="POST">
+  <div class="field">
+    <label class="label">Enter Amount</label>
+    <input class="input" type="number" placeholder="Euros" name="amount" value="1" />
+  </div>
+  <div>
+    <div class=" box field is-horizontal">
+      <div class="field-body ml-6">
+        <div class="control is-expanded mt-2">
+          <input class=" radio" type="radio" name="method" value="paypal" />
+          Paypal
+          <input class="radio" type="radio" name="method" value="cash" />
+          Cash
+        </div>
+      </div>
+      <div class="field-body">
+        <div class="select">
+          <select name="candidate">
+            {{#each candidates}}
+            <option value={{_id}}> {{lastName}},{{firstName}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="field mt-2">
+    {{> coordinates}}
+  </div>
+  <div class="field">
+    <div class="control">
+      <button class="button is-success is-fullwidth">Donate</button>
+    </div>
+  </div>
+</form>
