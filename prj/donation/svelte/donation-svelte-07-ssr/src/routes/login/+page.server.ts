@@ -14,7 +14,6 @@ export const actions = {
       const session = await donationService.login(email, password);
 
       if (session) {
-        // currentSession.set(session);
         const userJson = JSON.stringify(session);
         cookies.set("donation-user", userJson, {
           path: "/",
