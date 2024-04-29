@@ -1,1 +1,1 @@
-Maps in Svelte
+SSR
