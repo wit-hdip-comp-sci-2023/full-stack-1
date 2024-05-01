@@ -1,1 +1,1 @@
-Maps in Svelte
+Full Stack SvelteKit
