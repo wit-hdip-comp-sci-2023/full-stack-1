@@ -1,6 +1,9 @@
 import type { Donation } from "$lib/types/donation-types";
 import { Schema, model } from "mongoose";
 
+import pkg from "mongoose";
+const { models } = pkg;
+
 const donationSchema = new Schema<Donation>({
   amount: Number,
   method: String,
@@ -20,4 +23,4 @@ const donationSchema = new Schema<Donation>({
   lng: String
 });
 
-export const DonationMongoose = model("Donation", donationSchema);
+export const DonationMongoose = models["Donation"] || model("Donation", donationSchema);
