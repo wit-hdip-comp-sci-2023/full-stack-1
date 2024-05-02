@@ -1,3 +1,3 @@
-Typescript
+TypeScript
 
-Typescript for Javascript programmers
+TypeScript for JavaScript programmers

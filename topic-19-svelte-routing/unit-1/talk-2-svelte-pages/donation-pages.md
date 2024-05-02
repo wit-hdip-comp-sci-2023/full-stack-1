@@ -1,3 +1,3 @@
 Pages & Components
 
-The structure of a SveteKit application
+The structure of a SvelteKit application

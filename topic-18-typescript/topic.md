@@ -3,7 +3,7 @@ icon:
   type: file-icons:test-typescript
   color: DarkBlue
 ---
-18: Typescript
+18: TypeScript
 
-Typescript Hapi Applications
+TypeScript Hapi Applications
 
