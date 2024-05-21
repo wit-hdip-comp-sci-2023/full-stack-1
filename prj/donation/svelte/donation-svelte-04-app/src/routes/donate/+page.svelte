@@ -27,7 +27,7 @@
 
 <div class="columns">
   <div class="column">
-    <Card title="Donatinons to Date">
+    <Card title="Donations to Date">
       <DonationList {donations} />
     </Card>
   </div>

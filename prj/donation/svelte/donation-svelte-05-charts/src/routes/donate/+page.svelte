@@ -35,7 +35,7 @@
 
 <div class="columns">
   <div class="column">
-    <Card title="Donatinons to Date">
+    <Card title="Donations to Date">
       <Chart data={donationsByCandidate} type="bar" />
     </Card>
   </div>
