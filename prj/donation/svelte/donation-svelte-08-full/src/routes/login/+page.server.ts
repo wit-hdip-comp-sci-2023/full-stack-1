@@ -11,7 +11,7 @@ export const actions = {
     if (email === "" || password === "") {
       throw redirect(307, "/");
     } else {
-      console.log(`attemting to log in email: ${email} with password: ${password}`);
+      console.log(`attempting to log in email: ${email} with password: ${password}`);
       const session = await donationService.login(email, password);
 
       if (session) {

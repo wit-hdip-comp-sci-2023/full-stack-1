@@ -52,7 +52,7 @@
 
 <div class="columns">
   <div class="column">
-    <Card title="Donatinons to Date">
+    <Card title="Donations to Date">
       <LeafletMap height={30} bind:this={map} />
     </Card>
   </div>
@@ -64,7 +64,7 @@
 </div>
 <div class="columns">
   <div class="column">
-    <Card title="Donatinons to Date">
+    <Card title="Donations to Date">
       <Chart data={donationsByCandidate} type="bar" />
     </Card>
   </div>
