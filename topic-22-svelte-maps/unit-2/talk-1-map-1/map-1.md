@@ -1,3 +1,3 @@
 Leaflet Maps
 
-Introducing to using Leaflet maps in Svelte applications
+Introduction to using Leaflet maps in Svelte applications
