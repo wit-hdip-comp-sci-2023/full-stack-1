@@ -1,1 +1,0 @@
-Rich Harris on Svelte

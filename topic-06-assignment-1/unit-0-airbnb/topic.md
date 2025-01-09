@@ -1,1 +1,0 @@
-AirBnB Javascript Style Guide
