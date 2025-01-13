@@ -7,6 +7,7 @@ credits: Eamonn de Leastar
 auth: 1
 ignorepin: 2125
 hideVideos: true
+llms: true
 icon:
   type: la:server
   color: 2D5BA6
