@@ -3,7 +3,7 @@ moodle: https://moodle.wit.ie/course/view.php?id=185752&section=3
 youtube: https://www.youtube.com/playlist?list=PLEuhMaR29LyAdNOvjHdRe_67IdYCX-QUo
 parent: course/wit-hdip-comp-sci-2023
 credits: Eamonn de Leastar
-#  github: https://github.com/wit-hdip-comp-sci-2023/full-stack-1/blob/main
+github: https://github.com/wit-hdip-comp-sci-2023/full-stack-1/blob/main
 auth: 1
 ignorepin: 2125
 hideVideos: true
