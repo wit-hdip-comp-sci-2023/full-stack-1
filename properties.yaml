@@ -7,7 +7,7 @@ github: https://github.com/wit-hdip-comp-sci-2023/full-stack-1/blob/main
 auth: 1
 ignorepin: 2125
 hideVideos: true
-llms: 0
+llm: 0
 icon:
   type: la:server
   color: 2D5BA6
