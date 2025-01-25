@@ -854,3 +854,301 @@ The values can be dynamic, like any other attribute.
 > Because of `display: contents` this won't affect your layout, but the extra element _can_ affect selectors like `.parent > .child`.
 
 
+# Actions
+
+## The use directive
+
+Actions are essentially element-level lifecycle functions. They're useful for things like:
+
+- interfacing with third-party libraries
+- lazy-loaded images
+- tooltips
+- adding custom event handlers
+
+In this app, you can scribble on the `<canvas>`, and change colours and brush size via the menu. But if you open the menu and cycle through the options with the Tab key, you'll soon find that the focus isn't _trapped_ inside the modal.
+
+We can fix that with an action. Import `trapFocus` from `actions.svelte.js`...
+
+```svelte
+<script>
+  import Canvas from './Canvas.svelte';
+  import { trapFocus } from './actions.svelte.js';
+
+  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet', 'white', 'black'];
+
+  let selected = $state(colors[0]);
+  let size = $state(10);
+  let showMenu = $state(true);
+</script>
+```
+
+...then add it to the menu with the `use:` directive:
+
+```svelte
+<div class="menu" use:trapFocus>
+```
+
+Let's take a look at the `trapFocus` function in `actions.svelte.js`. An action function is called with a `node` — the `<div class="menu">` in our case — when the node is mounted to the DOM. Inside the action, we have an [effect](effects).
+
+First, we need to add an event listener that intercepts Tab key presses:
+
+```js
+$effect(() => {
+  focusable()[0]?.focus();
+  node.addEventListener('keydown', handleKeydown);
+});
+```
+
+Second, we need to do some cleanup when the node is unmounted — removing the event listener, and restoring focus to where it was before the element mounted:
+
+```js
+$effect(() => {
+  focusable()[0]?.focus();
+  node.addEventListener('keydown', handleKeydown);
+
+ return () => {
+    node.removeEventListener('keydown', handleKeydown);
+    previous?.focus();
+  };
+});
+```
+
+Now, when you open the menu, you can cycle through the options with the Tab key.
+
+## Adding parameters
+
+Like transitions and animations, an action can take an argument, which the action function will be called with alongside the element it belongs to.
+
+In this exercise, we want to add a tooltip to the `<button>` using the [`Tippy.js`](https://atomiks.github.io/tippyjs/) library. The action is already wired up with `use:tooltip`, but if you hover over the button (or focus it with the keyboard) the tooltip contains no content.
+
+First, the action needs to accept a function that returns some options to pass to Tippy:
+
+```js
+function tooltip(node, fn) {
+  $effect(() => {
+    const tooltip = tippy(node, fn());
+
+    return tooltip.destroy;
+  });
+}
+```
+
+> [!NOTE] We're passing in a function, rather than the options themselves, because the `tooltip` function does not re-run when the options change.
+
+Then, we need to pass the options into the action:
+
+```svelte
+<button use:tooltip={() => ({ content })}>
+  Hover me
+</button>
+```
+
+> [!NOTE] In Svelte 4, actions returned an object with `update` and `destroy` methods. This still works but we recommend using `$effect` instead, as it provides more flexibility and granularity.
+
+# Transitions
+
+## The transition directive
+
+
+We can make more appealing user interfaces by gracefully transitioning elements into and out of the DOM. Svelte makes this very easy with the `transition` directive.
+
+First, import the `fade` function from `svelte/transition`...
+
+```svelte
+<script>
+  import { fade } from 'svelte/transition';
+
+  let visible = $state(true);
+</script>
+```
+
+...then add it to the `<p>` element:
+
+```svelte
+<p transition:fade>
+  Fades in and out
+</p>
+```
+
+## Adding parameters
+
+Transition functions can accept parameters. Replace the `fade` transition with `fly`...
+
+```svelte
+<script>
+  import { fly } from 'svelte/transition';
+
+  let visible = $state(true);
+</script>
+```
+
+...and apply it to the `<p>` along with some options:
+
+```svelte
+<p transition:fly={{ y: 200, duration: 2000 }}>
+  Flies in and out
+</p>
+```
+
+Note that the transition is _reversible_ — if you toggle the checkbox while the transition is ongoing, it transitions from the current point, rather than the beginning or the end.
+
+## In and out
+
+Instead of the `transition` directive, an element can have an `in` or an `out` directive, or both together. Import `fade` alongside `fly`...
+
+```js
+import { fade, fly } from 'svelte/transition';
+```
+
+...then replace the `transition` directive with separate `in` and `out` directives:
+
+```svelte
+<p in:fly={{ y: 200, duration: 2000 }} out:fade>
+  Flies in, fades out
+</p>
+```
+
+In this case, the transitions are _not_ reversed.
+
+## Custom CSS transitions
+
+The `svelte/transition` module has a handful of built-in transitions, but it's very easy to create your own. By way of example, this is the source of the `fade` transition:
+
+```js
+function fade(node, { delay = 0, duration = 400 }) {
+  const o = +getComputedStyle(node).opacity;
+
+  return {
+    delay,
+    duration,
+    css: (t) => `opacity: ${t * o}`
+  };
+}
+```
+
+The function takes two arguments — the node to which the transition is applied, and any parameters that were passed in — and returns a transition object which can have the following properties:
+
+- `delay` — milliseconds before the transition begins
+- `duration` — length of the transition in milliseconds
+- `easing` — a `p => t` easing function (see the chapter on [tweening](/tutorial/svelte/tweens))
+- `css` — a `(t, u) => css` function, where `u === 1 - t`
+- `tick` — a `(t, u) => {...}` function that has some effect on the node
+
+The `t` value is `0` at the beginning of an intro or the end of an outro, and `1` at the end of an intro or beginning of an outro.
+
+Most of the time you should return the `css` property and _not_ the `tick` property, as CSS animations run off the main thread to prevent jank where possible. Svelte 'simulates' the transition and constructs a CSS animation, then lets it run.
+
+For example, the `fade` transition generates a CSS animation somewhat like this:
+
+<!-- prettier-ignore-start -->
+```css
+0% { opacity: 0 }
+10% { opacity: 0.1 }
+20% { opacity: 0.2 }
+/* ... */
+100% { opacity: 1 }
+```
+<!-- prettier-ignore-end -->
+
+We can get a lot more creative though. Let's make something truly gratuitous:
+
+```svelte
+<script>
+  import { fade } from 'svelte/transition';
+  import { elasticOut } from 'svelte/easing';
+
+  let visible = $state(true);
+
+  function spin(node, { duration }) {
+    return {
+      duration,
+      css: (t, u) => {
+        const eased = elasticOut(t);
+
+        return `
+          transform: scale(${eased}) rotate(${eased * 1080}deg);
+          color: hsl(
+            ${Math.trunc(t * 360)},
+            ${Math.min(100, 1000 * u)}%,
+            ${Math.min(50, 500 * u)}%
+          );`
+      }
+    };
+  }
+</script>
+```
+
+Remember: with great power comes great responsibility.
+
+## Custom JS transitions
+
+While you should generally use CSS for transitions as much as possible, there are some effects that can't be achieved without JavaScript, such as a typewriter effect:
+
+```js
+function typewriter(node, { speed = 1 }) {
+  const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
+
+  if (!valid) {
+    throw new Error(`This transition only works on elements with a single text node child`);
+  }
+
+  const text = node.textContent;
+  const duration = text.length / (speed * 0.01);
+
+  return {
+    duration,
+    tick: (t) => {
+      const i = Math.trunc(text.length * t);
+      node.textContent = text.slice(0, i);
+    }
+  };
+}
+```
+
+## Transition events
+
+It can be useful to know when transitions are beginning and ending. Svelte dispatches events that you can listen to like any other DOM event:
+
+```svelte
+<p
+  transition:fly={{ y: 200, duration: 2000 }}
+ onintrostart={() => status = 'intro started'}
+  onoutrostart={() => status = 'outro started'}
+  onintroend={() => status = 'intro ended'}
+  onoutroend={() => status = 'outro ended'}
+>
+  Flies in and out
+</p>
+```
+
+## Global transitions
+
+Ordinarily, transitions will only play on elements when their direct containing block is added or destroyed. In the example here, toggling the visibility of the entire list does not apply transitions to individual list elements.
+
+Instead, we'd like transitions to not only play when individual items are added and removed with the slider but also when we toggle the checkbox.
+
+We can achieve this with a _global_ transition, which plays when _any_ block containing the transitions is added or removed:
+
+```svelte
+<div transition:slide|global>
+  {item}
+</div>
+```
+
+> [!NOTE] In Svelte 3, transitions were global by default and you had to use the `|local` modifier to make them local.
+
+## Key blocks
+
+Key blocks destroy and recreate their contents when the value of an expression changes. This is useful if you want an element to play its transition whenever a value changes instead of only when the element enters or leaves the DOM.
+
+Here, for example, we'd like to play the `typewriter` transition from `transition.js` whenever the loading message, i.e. `i` changes. Wrap the `<p>` element in a key block:
+
+```svelte
+{#key i}
+  <p in:typewriter={{ speed: 10 }}>
+    {messages[i] || ''}
+  </p>
+{/key}
+```
+
+
