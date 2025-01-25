@@ -615,9 +615,242 @@ In `App.svelte`, define the handlers:
 We can also [spread](spread-props) event handlers directly onto elements. Here, we've defined an `onclick` handler in `App.svelte` — all we need to do is pass the props to the `<button>` in `BigRedButton.svelte`:
 
 ```svelte
-<button +++{...props}+++>
+<button {...props}>
   Push
 </button>
 ```
+
+# Bindings
+
+## Text inputs
+
+As a general rule, data flow in Svelte is _top down_ — a parent component can set props on a child component, and a component can set attributes on an element, but not the other way around.
+
+Sometimes it's useful to break that rule. Take the case of the `<input>` element in this component — we _could_ add an `oninput` event handler that sets the value of `name` to `event.target.value`, but it's a bit... boilerplatey. It gets even worse with other form elements, as we'll see.
+
+Instead, we can use the `bind:value` directive:
+
+```svelte
+<input bind:value={name}>
+```
+
+This means that not only will changes to the value of `name` update the input value, but changes to the input value will update `name`.
+
+## Numeric inputs
+
+In the DOM, every input value is a string. That's unhelpful when you're dealing with numeric inputs — `type="number"` and `type="range"` — as it means you have to remember to coerce `input.value` before using it.
+
+With `bind:value`, Svelte takes care of it for you:
+
+```svelte
+<label>
+  <input type="number" bind:value={a} min="0" max="10" />
+  <input type="range" bind:value={a} min="0" max="10" />
+</label>
+
+<label>
+  <input type="number" bind:value={b} min="0" max="10" />
+  <input type="range" bind:value={b} min="0" max="10" />
+</label>
+```
+
+## Checkbox inputs
+
+Checkboxes are used for toggling between states. Instead of binding to `input.value`, we bind to `input.checked`:
+
+```svelte
+<input type="checkbox" bind:checked={yes}>
+```
+
+## Select bindings
+
+We can also use `bind:value` with `<select>` elements:
+
+```svelte
+<select
+    bind:value={selected}
+    onchange={() => answer = ''}
+>
+```
+
+Note that the `<option>` values are objects rather than strings. Svelte doesn't mind.
+
+> [!NOTE] Because we haven't set an initial value of `selected`, the binding will set it to the default value (the first in the list) automatically. Be careful though — until the binding is initialised, `selected` remains undefined, so we can't blindly reference e.g. `selected.id` in the template.
+
+## Group inputs
+
+If you have multiple `type="radio"` or `type="checkbox"` inputs relating to the same value, you can use `bind:group` along with the `value` attribute. Radio inputs in the same group are mutually exclusive; checkbox inputs in the same group form an array of selected values.
+
+Add `bind:group={scoops}` to the radio inputs...
+
+```svelte
+<input
+  type="radio"
+  name="scoops"
+  value={number}
+  bind:group={scoops}
+/>
+```
+
+...and `bind:group={flavours}` to the checkbox inputs:
+
+```svelte
+<input
+  type="checkbox"
+  name="flavours"
+  value={flavour}
+  bind:group={flavours}
+/>
+```
+
+## Select multiple
+
+A `<select>` element can have a `multiple` attribute, in which case it will populate an array rather than selecting a single value.
+
+Replace the checkboxes with a `<select multiple>`:
+
+```svelte
+<h2>Flavours</h2>
+
+<select multiple bind:value={flavours}>
+  {#each ['cookies and cream', 'mint choc chip', 'raspberry ripple'] as flavour}
+   <option>{flavour}</option>
+  {/each}
+</select>
+```
+
+Note that we're able to omit the `value` attribute on the `<option>`, since the value is identical to the element's contents.
+
+> [!NOTE] Press and hold the `control` key (or the `command` key on MacOS) to select multiple options.
+
+## Textarea inputs
+
+The `<textarea>` element behaves similarly to a text input in Svelte — use `bind:value`:
+
+```svelte
+<textarea bind:value={value}></textarea>
+```
+
+In cases like these, where the names match, we can also use a shorthand form:
+
+```svelte
+<textarea bind:value></textarea>
+```
+
+This applies to all bindings, not just `<textarea>` bindings.
+
+
+# Classes & Styles
+
+## The class attribute
+
+Like any other attribute, you can specify classes with a JavaScript attribute. Here, we could add a `flipped` class to the card:
+
+```svelte
+<button
+  class="card {flipped ? 'flipped' : ''}"
+  onclick={() => flipped = !flipped}
+>
+```
+
+This works as expected — if you click on the card now, it'll flip.
+
+We can make it nicer though. Adding or removing a class based on some condition is such a common pattern in UI development that Svelte allows you to pass an object or array that is converted to a string by [clsx](https://github.com/lukeed/clsx).
+
+```svelte
+<button
+  class={["card", { flipped }]}
+  onclick={() => flipped = !flipped}
+>
+```
+
+This means 'always add the `card` class, and add the `flipped` class whenever `flipped` is truthy'.
+
+## The style directive
+
+As with `class`, you can write your inline `style` attributes literally, because Svelte is really just HTML with fancy bits:
+
+```svelte
+<button
+  class="card"
+  style="transform: {flipped ? 'rotateY(0)' : ''}; --bg-1: palegoldenrod; --bg-2: black; --bg-3: goldenrod"
+  onclick={() => flipped = !flipped}
+>
+```
+
+When you have a lot of styles, it can start to look a bit wacky. We can tidy things up by using the `style:` directive:
+
+```svelte
+<button
+  class="card"
+ style:transform={flipped ? 'rotateY(0)' : ''}
+  style:--bg-1="palegoldenrod"
+  style:--bg-2="black"
+  style:--bg-3="goldenrod"
+  onclick={() => flipped = !flipped}
+>
+```
+
+## Component styles
+
+Often, you need to influence the styles inside a child component. Perhaps we want to make these boxes red, green and blue.
+
+One way to do this is with the `:global` CSS modifier, which allows you to indiscriminately target elements inside other components:
+
+```svelte
+<style>
+  .boxes :global(.box:nth-child(1)) {
+    background-color: red;
+  }
+
+  .boxes :global(.box:nth-child(2)) {
+    background-color: green;
+  }
+
+  .boxes :global(.box:nth-child(3)) {
+    background-color: blue;
+  }
+</style>
+```
+
+But there are lots of reasons _not_ to do that. For one thing, it's extremely verbose. For another, it's brittle — any changes to the implementation details of `Box.svelte` could break the selector.
+
+Most of all though, it's rude. Components should be able to decide for themselves which styles can be controlled from 'outside', in the same way they decide which variables are exposed as props. `:global` should be used as an escape hatch — a last resort.
+
+Inside `Box.svelte`, change `background-color` so that it is determined by a [CSS custom property](https://developer.mozilla.org/en-US/docs/Web/CSS/--*):
+
+```svelte
+<style>
+  .box {
+    width: 5em;
+    height: 5em;
+    border-radius: 0.5em;
+    margin: 0 0 1em 0;
+    background-color: var(--color, #ddd);
+  }
+</style>
+```
+
+Any parent element (such as `<div class="boxes">`) can set the value of `--color`, but we can also set it on individual components:
+
+```svelte
+<div class="boxes">
+  <Box --color="red" />
+  <Box --color="green" />
+  <Box --color="blue" />
+</div>
+```
+
+The values can be dynamic, like any other attribute.
+
+> [!NOTE] This feature works by wrapping each component in an element with `display: contents`, where needed, and applying the custom properties to it. If you inspect the elements, you'll see markup like this:
+>
+> ```svelte
+> <svelte-css-wrapper style="display: contents; --color: red;">
+>   <!-- contents -->
+> </svelte-css-wrapper>
+> ```
+>
+> Because of `display: contents` this won't affect your layout, but the extra element _can_ affect selectors like `.parent > .child`.
 
 
