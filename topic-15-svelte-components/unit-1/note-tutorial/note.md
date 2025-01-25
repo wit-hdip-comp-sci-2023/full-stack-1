@@ -1,4 +1,4 @@
-Svelte Tutorial
+# Svelte 
 
 [[toc]]
 
@@ -318,7 +318,7 @@ In any real application, you'll need to pass data from one component down to its
 </script>
 ```
 
-# Default values
+## Default values
 
 We can easily specify default values for props in `Nested.svelte`:
 
@@ -374,5 +374,250 @@ We _could_ fix it by adding the prop...
 > console.log(stuff.name, stuff.version, stuff.description, stuff.website);
 > ```
 
+# Logic
+
+## If blocks
+
+
+HTML doesn't have a way of expressing _logic_, like conditionals and loops. Svelte does.
+
+To conditionally render some markup, we wrap it in an `if` block. Let's add some text that appears when `count` is greater than `10`:
+
+```svelte
+<button onclick={increment}>
+  Clicked {count}
+  {count === 1 ? 'time' : 'times'}
+</button>
+
+{#if count > 10}
+  <p>{count} is greater than 10</p>
+{/if}
+```
+
+
+## Else blocks
+
+Just like in JavaScript, an `if` block can have an `else` block:
+
+```svelte
+{#if count > 10}
+  <p>{count} is greater than 10</p>
+{:else}
+  <p>{count} is between 0 and 10</p>
+{/if}
+```
+
+`{#...}` opens a block. `{/...}` closes a block. `{:...}` _continues_ a block. Congratulations — you've already learned almost all the syntax Svelte adds to HTML.
+
+
+## Else-if blocks
+
+Multiple conditions can be 'chained' together with `else if`:
+
+```svelte
+
+{#if count > 10}
+  <p>{count} is greater than 10</p>
+{:else if count < 5}
+  <p>{count} is less than 5</p>
+{:else}
+  <p>{count} is between 5 and 10</p>
+{/if}
+```
+
+## Each blocks
+
+When building user interfaces you'll often find yourself working with lists of data. In this exercise, we've repeated the `<button>` markup multiple times — changing the colour each time — but there's still more to add.
+
+Instead of laboriously copying, pasting and editing, we can get rid of all but the first button, then use an `each` block:
+
+```svelte
+<div>
+  {#each colors as color}
+    <button
+      style="background: red"
+      aria-label="red"
+      aria-current={selected === 'red'}
+      onclick={() => selected = 'red'}
+    ></button>
+  {/each}
+</div>
+```
+
+> [!NOTE] The expression (`colors`, in this case) can be any iterable or array-like object — in other words, anything that works with [`Array.from`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from).
+
+Now we need to use the `color` variable in place of `"red"`:
+
+```svelte
+<div>
+  {#each colors as color}
+    <button
+      style="background: {color}"
+      aria-label={color}
+      aria-current={selected === color}
+      onclick={() => selected = color}
+    ></button>
+  {/each}
+</div>
+```
+
+You can get the current _index_ as a second argument, like so:
+
+```svelte
+<div>
+  {#each colors as color, i}
+    <button
+      style="background: {color}"
+      aria-label={color}
+      aria-current={selected === color}
+      onclick={() => selected = color}
+    >{i + 1}</button>
+  {/each}
+</div>
+```
+
+## Keyed each blocks
+
+By default, when you modify the value of an `each` block, it will add and remove DOM nodes at the _end_ of the block, and update any values that have changed. That might not be what you want.
+
+It's easier to show why than to explain. Inside `Thing.svelte`, `name` is a dynamic prop but `emoji` is a constant.
+
+Click the 'Remove first thing' button a few times, and notice what happens:
+
+1. It removes the last component.
+2. It then updates the `name` value in the remaining DOM nodes, but not the emoji.
+
+> [!NOTE] If you're coming from React, this might seem strange, because you're used to the entire component re-rendering when state changes. Svelte works differently: the component 'runs' once, and subsequent updates are 'fine-grained'. This makes things faster and gives you more control.
+
+One way to fix it would be to make `emoji` a [`$derived`](derived-state) value. But it makes more sense to remove the first `<Thing>` component altogether rather than remove the _last_ one and update all the others.
+
+To do that, we specify a unique _key_ for each iteration of the `each` block:
+
+```svelte
+{#each things as thing (thing.id)}
+  <Thing name={thing.name}/>
+{/each}
+```
+
+> [!NOTE] You can use any object as the key, as Svelte uses a `Map` internally — in other words you could do `(thing)` instead of `(thing.id)`. Using a string or number is generally safer, however, since it means identity persists without referential equality, for example when updating with fresh data from an API server.
+
+## Await blocks
+
+Most web applications have to deal with asynchronous data at some point. Svelte makes it easy to _await_ the value of [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises) directly in your markup:
+
+```svelte
+{#await promise}
+  <p>...rolling</p>
+{:then number}
+  <p>you rolled a {number}!</p>
+{:catch error}
+  <p style="color: red">{error.message}</p>
+{/await}
+```
+
+> [!NOTE] Only the most recent `promise` is considered, meaning you don't need to worry about race conditions.
+
+If you know that your promise can't reject, you can omit the `catch` block. You can also omit the first block if you don't want to show anything until the promise resolves:
+
+```svelte
+{#await promise then number}
+  <p>you rolled a {number}!</p>
+{/await}
+```
+
+# Events
+
+## DOM events
+
+As we've briefly seen already, you can listen to any DOM event on an element (such as click or [pointermove](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointermove_event)) with an `on<name>` function:
+
+```svelte
+<div onpointermove={onpointermove}>
+  The pointer is at {Math.round(m.x)} x {Math.round(m.y)}
+</div>
+```
+
+Like with any other property where the name matches the value, we can use the short form:
+
+```svelte
+<div {onpointermove}>
+  The pointer is at {Math.round(m.x)} x {Math.round(m.y)}
+</div>
+```
+
+## Inline handlers
+
+You can also declare event handlers inline:
+
+```svelte
+
+<script>
+  let m = $state({ x: 0, y: 0 });
+
+  ---function onpointermove(event) {
+    m.x = event.clientX;
+    m.y = event.clientY;
+  }---
+</script>
+
+<div
+  onpointermove={(event) => {
+    m.x = event.clientX;
+    m.y = event.clientY;
+  }}
+>
+  The pointer is at {m.x} x {m.y}
+</div>
+```
+
+## Capturing
+
+Normally, event handlers run during the [_bubbling_](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Event_bubbling) phase. Notice what happens if you type something into the `<input>` in this example — the inner handler runs first, as the event 'bubbles' from the target up to the document, followed by the outer handler.
+
+Sometimes, you want handlers to run during the _capture_ phase instead. Add `capture` to the end of the event name:
+
+```svelte
+<div onkeydowncapture={(e) => alert(`<div> ${e.key}`)} role="presentation">
+  <input onkeydowncapture={(e) => alert(`<input> ${e.key}`)} />
+</div>
+```
+
+Now, the relative order is reversed. If both capturing and non-capturing handlers exist for a given event, the capturing handlers will run first.
+
+## Component events
+
+You can pass event handlers to components like any other prop. In `Stepper.svelte`, add `increment` and `decrement` props...
+
+```svelte
+<script>
+  let { increment, decrement } = $props();
+</script>
+```
+
+...and wire them up:
+
+```svelte
+<button onclick={decrement}>-1</button>
+<button onclick={increment}>+1</button>
+```
+
+In `App.svelte`, define the handlers:
+
+```svelte
+<Stepper
+  increment={() => value += 1}
+  decrement={() => value -= 1}
+/>
+```
+
+## Spreading events
+
+We can also [spread](spread-props) event handlers directly onto elements. Here, we've defined an `onclick` handler in `App.svelte` — all we need to do is pass the props to the `<button>` in `BigRedButton.svelte`:
+
+```svelte
+<button +++{...props}+++>
+  Push
+</button>
+```
 
 
