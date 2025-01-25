@@ -1,3 +1,4 @@
+Svelte Tutorial
 
 [[toc]]
 
@@ -23,7 +24,6 @@ A component that just renders some static markup isn't very interesting. Let's a
 First, add a script tag to your component and declare a `name` variable:
 
 ```svelte
-/// file: App.svelte
 script>
   let name = 'Svelte';
 </script>
@@ -34,14 +34,12 @@ script>
 Then, we can refer to `name` in the markup:
 
 ```svelte
-/// file: App.svelte
 <h1>Hello {name}!</h1>
 ```
 
 Inside the curly braces, we can put any JavaScript we want. Try changing `name` to `name.toUpperCase()` for a shoutier greeting.
 
 ```svelte
-/// file: App.svelte
 <h1>Hello {name.toUpperCase()}!</h1>
 ```
 
@@ -53,7 +51,6 @@ Just like you can use curly braces to control text, you can use them to control 
 Our image is missing a `src` — let's add one:
 
 ```svelte
-/// file: App.svelte
 <img src={src} />
 ```
 
@@ -68,7 +65,6 @@ When building web apps, it's important to make sure that they're _accessible_ to
 In this case, we're missing the `alt` attribute that describes the image for people using screenreaders, or people with slow or flaky internet connections that can't download the image. Let's add one:
 
 ```svelte
-/// file: App.svelte
 <img src={src} alt="A man dances." />
 ```
 
@@ -79,7 +75,6 @@ We can use curly braces _inside_ attributes. Try changing it to `"{name} dances.
 It's not uncommon to have an attribute where the name and value are the same, like `src={src}`. Svelte gives us a convenient shorthand for these cases:
 
 ```svelte
-/// file: App.svelte
 <img {src} alt="{name} dances." />
 ```
 
@@ -88,7 +83,6 @@ It's not uncommon to have an attribute where the name and value are the same, li
 Just like in HTML, you can add a `<style>` tag to your component. Let's add some styles to the `<p>` element:
 
 ```svelte
-/// file: App.svelte
 <p>This is a paragraph.</p>
 
 <style>
@@ -109,7 +103,6 @@ It would be impractical to put your entire app in a single component. Instead, w
 Add a `<script>` tag to the top of `App.svelte` that imports `Nested.svelte`...
 
 ```svelte
-/// file: App.svelte
 <script>
   import Nested from './Nested.svelte';
 </script>
@@ -118,7 +111,6 @@ Add a `<script>` tag to the top of `App.svelte` that imports `Nested.svelte`...
 ...and include a `<Nested />` component:
 
 ```svelte
-/// file: App.svelte
 <p>This is a paragraph.</p>
 <Nested />
 ```
@@ -136,7 +128,6 @@ But sometimes you need to render HTML directly into a component. For example, th
 In Svelte, you do this with the special `{@html ...}` tag:
 
 ```svelte
-/// file: App.svelte
 <p>{@html string}</p>
 ```
 
@@ -152,7 +143,6 @@ At the heart of Svelte is a powerful system of _reactivity_ for keeping the DOM 
 Make the `count` declaration reactive by wrapping the value with `$state(...)`:
 
 ```js
-/// file: App.svelte
 let count = $state(0);
 ```
 
@@ -161,7 +151,6 @@ This is called a _rune_, and it's how you tell Svelte that `count` isn't an ordi
 All that's left is to implement `increment`:
 
 ```js
-/// file: App.svelte
 function increment() {
   count += 1;
 }
@@ -174,14 +163,12 @@ As we saw in the previous exercise, state reacts to _reassignments_. But it also
 Make `numbers` a reactive array:
 
 ```js
-/// file: App.svelte
 let numbers = $state([1, 2, 3, 4]);
 ```
 
 Now, when we change the array...
 
 ```js
-/// file: App.svelte
 function addNumber() {
   numbers[numbers.length] = numbers.length + 1;
 }
@@ -190,7 +177,6 @@ function addNumber() {
 ...the component updates. Or better still, we can `push` to the array instead:
 
 ```js
-/// file: App.svelte
 function addNumber() {
   numbers.push(numbers.length + 1);
 }
@@ -203,7 +189,6 @@ function addNumber() {
 Often, you will need to _derive_ state from other state. For this, we have the `$derived` rune:
 
 ```js
-/// file: App.svelte
 let numbers = $state([1, 2, 3, 4]);
 let total = $derived(numbers.reduce((t, n) => t + n, 0));
 ```
@@ -211,7 +196,6 @@ let total = $derived(numbers.reduce((t, n) => t + n, 0));
 We can now use this in our markup:
 
 ```svelte
-/// file: App.svelte
 <p>{numbers.join(' + ')} = {total}</p>
 ```
 
@@ -226,7 +210,6 @@ Inside the `addNumber` function, we've added a `console.log` statement. But if y
 That's because `numbers` is a reactive [proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). There are a couple of things we can do. Firstly, we can create a non-reactive _snapshot_ of the state with `$state.snapshot(...)`:
 
 ```js
-/// file: App.svelte
 function addNumber() {
   numbers.push(numbers.length + 1);
   console.log($state.snapshot(numbers));
@@ -236,7 +219,6 @@ function addNumber() {
 Alternatively, we can use the `$inspect` rune to automatically log a snapshot of the state whenever it changes. This code will automatically be stripped out of your production build:
 
 ```js
-/// file: App.svelte
 function addNumber() {
   numbers.push(numbers.length + 1);
   ---console.log($state.snapshot(numbers));---
@@ -248,7 +230,6 @@ $inspect(numbers);
 You can customise how the information is displayed by using `$inspect(...).with(fn)` — for example, you can use `console.trace` to see where the state change originated from:
 
 ```js
-/// file: App.svelte
 $inspect(numbers).with(console.trace);
 ```
 
@@ -263,7 +244,6 @@ The thing that reacts is called an _effect_. You've already encountered effects 
 Let's say we want to use `setInterval` to keep track of how long the component has been mounted. Create the effect:
 
 ```svelte
-/// file: App.svelte
 <script>
   let elapsed = $state(0);
   let interval = $state(1000);
@@ -281,7 +261,6 @@ Click the 'speed up' button a few times and notice that `elapsed` ticks up faste
 If we then click the 'slow down' button... well, it doesn't work. That's because we're not clearing out the old intervals when the effect updates. We can fix that by returning a cleanup function:
 
 ```js
-/// file: App.svelte
 $effect(() => {
   const id = setInterval(() => {
     elapsed += 1;
@@ -306,7 +285,6 @@ In the preceding exercises, we used runes to add reactivity inside components. B
 The `<Counter>` components in this exercise are all importing the `counter` object from `shared.js`. But it's a normal object, and as such nothing happens when you click the buttons. Wrap the object in `$state(...)`:
 
 ```js
-/// file: shared.js
 export const counter = $state({
   count: 0
 });
@@ -317,7 +295,6 @@ This causes an error, because you can't use runes in normal `.js` files, only `.
 Then, update the import declaration in `Counter.svelte`:
 
 ```svelte
-/// file: Counter.svelte
 <script>
   import { counter } from './shared.svelte.js';
 </script>
@@ -326,4 +303,76 @@ Then, update the import declaration in `Counter.svelte`:
 Now, when you click any button, all three update simultaneously.
 
 > [!NOTE] You cannot export a `$state` declaration from a module if the declaration is reassigned (rather than just mutated), because the importers would have no way to know about it.
+
+# Props
+
+## Declaring props
+
+So far, we've dealt exclusively with internal state — that is to say, the values are only accessible within a given component.
+
+In any real application, you'll need to pass data from one component down to its children. To do that, we need to declare _properties_, generally shortened to 'props'. In Svelte, we do that with the `$props` rune. Edit the `Nested.svelte` component:
+
+```svelte
+<script>
+  let { answer } = $props();
+</script>
+```
+
+# Default values
+
+We can easily specify default values for props in `Nested.svelte`:
+
+```svelte
+<script>
+  let { answer = 'a mystery' } = $props();
+</script>
+```
+
+If we now add a second component _without_ an `answer` prop, it will fall back to the default:
+
+```svelte
+<Nested answer={42}/>
+<Nested />
+```
+
+## Spread props
+
+In this exercise, in `App.svelte` we've forgotten to pass the `name` prop expected by `PackageInfo.svelte`, meaning the `<code>` element is empty and the npm link is broken.
+
+We _could_ fix it by adding the prop...
+
+```svelte
+<PackageInfo
+  name={pkg.name}
+  version={pkg.version}
+  description={pkg.description}
+  website={pkg.website}
+/>
+```
+
+...but since the properties of `pkg` correspond to the component's expected props, we can 'spread' them onto the component instead:
+
+```svelte
+<PackageInfo {...pkg} />
+```
+
+> [!NOTE] Conversely, in `PackageInfo.svelte` you can get an object containing all the props that were passed into a component using a rest property...
+>
+> ```js
+> let { name, ...stuff } = $props();
+> ```
+>
+> ...or by skipping [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) altogether:
+>
+> ```js
+> let stuff = $props();
+> ```
+>
+> ...in which case you can access the properties by their object paths:
+>
+> ```js
+> console.log(stuff.name, stuff.version, stuff.description, stuff.website);
+> ```
+
+
 
