@@ -16,21 +16,21 @@ export const db = {
 
   init(storeType) {
     switch (storeType) {
-      case "json" :
+      case "json":
         this.userStore = userJsonStore;
         this.playlistStore = playlistJsonStore;
         this.trackStore = trackJsonStore;
         break;
-      case "mongo" :
+      case "mongo":
         this.userStore = userMongoStore;
         this.playlistStore = playlistMongoStore;
         this.trackStore = trackMongoStore;
         connectMongo();
         break;
-      default :
+      default:
         this.userStore = userMemStore;
         this.playlistStore = playlistMemStore;
         this.trackStore = trackMemStore;
     }
-  }
+  },
 };
