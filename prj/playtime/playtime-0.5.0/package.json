@@ -11,24 +11,24 @@
   },
   "dependencies": {
     "@hapi/cookie": "^12.0.1",
-    "@hapi/hapi": "^21.3.2",
+    "@hapi/hapi": "^21.3.12",
     "@hapi/vision": "^7.0.3",
     "@hapi/boom": "^10.0.1",
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.4.7",
     "handlebars": "^4.7.8",
-    "joi": "^17.12.0",
+    "joi": "^17.13.3",
     "lowdb": "^7.0.1",
-    "uuid": "^9.0.1",
-    "mongoose": "^8.1.1"
+    "uuid": "^11.0.5",
+    "mongoose": "^8.9.6"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "prettier": "^3.2.4",
-    "chai": "^5.0.3",
-    "mocha": "^10.2.0",
-    "nodemon": "^3.0.3"
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.4.2",
+    "chai": "^5.1.2",
+    "mocha": "^11.1.0",
+    "nodemon": "^3.1.9"
   }
 }
