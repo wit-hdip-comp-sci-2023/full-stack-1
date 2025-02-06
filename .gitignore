@@ -1,4 +1,4 @@
 /json
 public-site
-package-lock.json
+**/package-lock.json
 
