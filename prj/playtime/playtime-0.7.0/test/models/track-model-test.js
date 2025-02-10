@@ -4,11 +4,10 @@ import { testPlaylists, testTracks, beethoven, mozart, concerto, testUsers } fro
 import { assertSubset } from "../test-utils.js";
 
 suite("Track Model tests", () => {
-
   let beethovenList = null;
 
   setup(async () => {
-    await db.init("mongo");
+    await db.init("json");
     await db.playlistStore.deleteAllPlaylists();
     await db.trackStore.deleteAllTracks();
     beethovenList = await db.playlistStore.addPlaylist(beethoven);
@@ -20,14 +19,14 @@ suite("Track Model tests", () => {
 
   test("create single track", async () => {
     const mozartList = await db.playlistStore.addPlaylist(mozart);
-    const track = await db.trackStore.addTrack(mozartList._id, concerto)
+    const track = await db.trackStore.addTrack(mozartList._id, concerto);
     assert.isNotNull(track._id);
-    assertSubset (concerto, track);
+    assertSubset(concerto, track);
   });
 
   test("create multiple trackApi", async () => {
     const tracks = await db.playlistStore.getPlaylistById(beethovenList._id);
-    assert.equal(testTracks.length, testTracks.length)
+    assert.equal(testTracks.length, testTracks.length);
   });
 
   test("delete all trackApi", async () => {
@@ -40,9 +39,9 @@ suite("Track Model tests", () => {
 
   test("get a track - success", async () => {
     const mozartList = await db.playlistStore.addPlaylist(mozart);
-    const track = await db.trackStore.addTrack(mozartList._id, concerto)
+    const track = await db.trackStore.addTrack(mozartList._id, concerto);
     const newTrack = await db.trackStore.getTrackById(track._id);
-    assertSubset (concerto, newTrack);
+    assertSubset(concerto, newTrack);
   });
 
   test("delete One Track - success", async () => {

@@ -1,3 +1,4 @@
+import Mongoose from "mongoose";
 import { Playlist } from "./playlist.js";
 import { trackMongoStore } from "./track-mongo-store.js";
 
@@ -8,7 +9,7 @@ export const playlistMongoStore = {
   },
 
   async getPlaylistById(id) {
-    if (id) {
+    if (Mongoose.isValidObjectId(id)) {
       const playlist = await Playlist.findOne({ _id: id }).lean();
       if (playlist) {
         playlist.tracks = await trackMongoStore.getTracksByPlaylistId(playlist._id);
@@ -39,5 +40,5 @@ export const playlistMongoStore = {
 
   async deleteAllPlaylists() {
     await Playlist.deleteMany({});
-  }
+  },
 };

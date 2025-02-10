@@ -5,50 +5,52 @@
       "lastName": "Simpson",
       "email": "homer@simpson.com",
       "password": "secret",
-      "_id": "ef4be94b-beea-4960-a32b-6e5088ac03db"
+      "_id": "a869cac9-74d0-4a19-9be6-b31f884de2e4"
     },
     {
       "firstName": "Marge",
       "lastName": "Simpson",
       "email": "marge@simpson.com",
       "password": "secret",
-      "_id": "ef934fe3-71df-44a1-8c49-8a31998120e8"
+      "_id": "e14518f2-2225-490c-9a21-dd0c9d1ad3f6"
     },
     {
       "firstName": "Bart",
       "lastName": "Simpson",
       "email": "bart@simpson.com",
       "password": "secret",
-      "_id": "7c8c5c98-2203-41cf-9848-b28a58ce1ae9"
-    }
-  ],
-  "playlists": [
+      "_id": "4674cfc0-74fa-437b-8e27-3a94cf958254"
+    },
     {
-      "title": "Mozart Favourites",
-      "_id": "c61a37a3-fc2c-4635-95cd-4acde57de84f"
+      "firstName": "Maggie",
+      "lastName": "Simpson",
+      "email": "maggie@simpson.com",
+      "password": "secret",
+      "_id": "558677b9-ad86-4a69-9d7c-3ef6c73dcd70"
     }
   ],
+  "playlists": [],
   "tracks": [
     {
       "title": "Piano Sonata No. 3",
       "artist": "Beethoven",
       "duration": 5,
-      "_id": "5d9cebe0-afbd-4fc8-90a0-f3900bf1a013",
-      "playlistid": "c61a37a3-fc2c-4635-95cd-4acde57de84f"
+      "_id": "3cfb65cc-075c-40ec-afe4-aa9de63d31ae",
+      "playlistid": "8a91b236-c2c7-4dbd-aa6e-4adf77d67537"
     },
     {
       "title": "Piano Sonata No. 7",
       "artist": "Beethoven",
       "duration": 6,
-      "_id": "1f776a68-a8dd-4103-8c6c-4dcddeb37f57",
-      "playlistid": "c61a37a3-fc2c-4635-95cd-4acde57de84f"
+      "_id": "c06447bb-ab37-43ec-b0f6-856b43496f00",
+      "playlistid": "8a91b236-c2c7-4dbd-aa6e-4adf77d67537"
     },
     {
       "title": "Piano Sonata No. 10",
       "artist": "Beethoven",
       "duration": 4,
-      "_id": "47faa1cf-fc71-411f-a8b0-212fc638fc49",
-      "playlistid": "c61a37a3-fc2c-4635-95cd-4acde57de84f"
+      "_id": "374df451-f8d0-4444-bc94-58dc9a7deb2a",
+      "playlistid": "8a91b236-c2c7-4dbd-aa6e-4adf77d67537"
     }
   ]
 }
