@@ -1,64 +1,6 @@
-# npm Modules
-
-Our uuidv4() function works fine:
-
-~~~javascript
-  function uuidv4() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0, v = c == "x" ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-~~~
-
-However, this function - and a set of related functions if we need them, as available as a library:
-
-- <https://www.npmjs.com/package/uuid>
-
-You as used to using npm modules within node applications. However, Front End frameworks can not also used this ecosystem, with the various bundling/packaging tools combining the modules for client side development.
-
-Start by install the module in the usual way:
-
-~~~bash
-npm install uuid
-~~~
-
-This extends our package.json with a new entry (at the end):
-
-~~~json
-{
-  "name": "todo-svelte",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.30",
-    "svelte": "^3.44.0",
-    "vite": "^2.8.0"
-  },
-  "dependencies": {
-    "uuid": "^8.3.2"
-  }
-}
-~~~
-
-We can now replace the function by importing the library version:
-
-```javascript
-import { v4 as uuidv4 } from 'uuid';
-```
-
-Verify that this works as before.
-
-This is the page at this point:
-~~~html
 <script>
   import { v4 as uuidv4 } from "uuid";
+  import Title from "$lib/Title.svelte";
   let todoText = $state("");
   let todoItems = $state([]);
   let doneItems = $state([]);
@@ -80,11 +22,7 @@ This is the page at this point:
 </script>
 
 <div class="container">
-  <div class="box has-text-centered">
-    <div class="title">Simple Todo List</div>
-    <div class="subtitle">Fun things to do</div>
-  </div>
-
+  <Title />
   <div class="section box">
     <div class="field is-horizontal">
       <div class="field-label is-normal">
@@ -148,5 +86,3 @@ This is the page at this point:
     </table>
   </div>
 </div>
-~~~
-
