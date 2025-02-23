@@ -1,23 +1,28 @@
 <script lang="ts">
-  export let email = "";
-  export let password = "";
+  let { email = $bindable(""), password = $bindable("") } = $props();
 </script>
 
 <div class="field">
-  <!-- svelte-ignore a11y-label-has-associated-control -->
-  <label class="label">Email</label>
+  <label class="label" for="email">Email</label>
   <div class="control has-icons-left">
-    <input bind:value={email} class="input" type="text" placeholder="Email" name="email" />
+    <input
+      id="email"
+      bind:value={email}
+      class="input"
+      type="text"
+      placeholder="Email"
+      name="email"
+    />
     <span class="icon is-small is-left">
       <i class="fa fa-envelope"></i>
     </span>
   </div>
 </div>
 <div class="field">
-  <!-- svelte-ignore a11y-label-has-associated-control -->
-  <label class="label">Password</label>
+  <label class="label" for="password">Password</label>
   <div class="control has-icons-left">
     <input
+      id="password"
       bind:value={password}
       class="input"
       type="password"

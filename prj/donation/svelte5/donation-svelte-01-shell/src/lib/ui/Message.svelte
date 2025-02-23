@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let message = "";
+  let { message } = $props();
 </script>
 
 <article class="message is-danger">
