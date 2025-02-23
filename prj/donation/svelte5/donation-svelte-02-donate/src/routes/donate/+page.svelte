@@ -1,6 +1,8 @@
 <script lang="ts">
   import { subTitle } from "$lib/runes.svelte";
-  subTitle.text = "Donate";
+  import DonateForm from "./DonateForm.svelte";
+
+  subTitle.text = "Make a Donation";
 </script>
 
-<p>Make a donation here!</p>
+<DonateForm />
