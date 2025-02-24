@@ -1,9 +1,6 @@
 <script lang="ts">
   import Coordinates from "$lib/ui/Coordinates.svelte";
 
-  let lat = 52.160858;
-  let lng = -7.15242;
-
   const candidateList = [
     {
       firstName: "Lisa",
@@ -22,10 +19,12 @@
     }
   ];
 
-  let amount = 0;
-  let selectedCandidate = "Simpson, Lisa";
+  let amount = $state(0);
+  let lat = $state(52.160858);
+  let lng = $state(-7.15242);
+  let selectedCandidate = $state("Simpson, Lisa");
   let paymentMethods = ["paypal", "direct"];
-  let selectedMethod = "paypal";
+  let selectedMethod = $state("paypal");
 
   async function donate() {
     console.log(`Just donated: ${amount} to ${selectedCandidate} via ${selectedMethod} payment`);
@@ -33,7 +32,7 @@
   }
 </script>
 
-<form on:submit|preventDefault={donate}>
+<div>
   <div class="field">
     <label class="label" for="amount">Enter Amount:</label>
     <input bind:value={amount} class="input" id="amount" name="amount" type="number" />
@@ -58,8 +57,8 @@
   </div>
   <div class="field">
     <div class="control">
-      <button class="button is-success is-fullwidth">Donate</button>
+      <button onclick={() => donate()} class="button">Donate</button>
     </div>
   </div>
-</form>
+</div>
 <Coordinates bind:lat bind:lng />
