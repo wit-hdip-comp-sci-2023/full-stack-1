@@ -1,14 +1,3 @@
-# Report
-
-Currently the `Report` menu option is not operational:
-
-![](img/52.png)
-
-We would like to show a list of donations here. Introduce this component:
-
-### src/lib/ui/DonationList.svelte
-
-~~~html
 <script lang="ts">
   export let donations = [
     {
@@ -65,23 +54,3 @@ We would like to show a list of donations here. Introduce this component:
     {/each}
   </tbody>
 </table>
-~~~
-
-We can then implement the report route:
-
-### src/routes/report/+page.svelte
-
-~~~html
-<script lang="ts">
-  import DonationList from "$lib/ui/DonationList.svelte";
-</script>
-
-<DonationList />
-~~~
-
-![](img/53.png)
-
-Note, if you are not 'logged in' as such, then the view will malfunction and not display the menu + header. If you revert to the home page and log in again then the report should function as above.
-
-Refreshing the page will also trigger this malfunction. Can you explain why?
-

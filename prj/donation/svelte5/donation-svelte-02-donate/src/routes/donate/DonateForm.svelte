@@ -1,25 +1,58 @@
 <script lang="ts">
+  import Coordinates from "$lib/ui/Coordinates.svelte";
+
+  let lat = 52.160858;
+  let lng = -7.15242;
+
+  const candidateList = [
+    {
+      firstName: "Lisa",
+      lastName: "Simpson",
+      office: "President"
+    },
+    {
+      firstName: "Maggie",
+      lastName: "Simpson",
+      office: "President"
+    },
+    {
+      firstName: "Ned",
+      lastName: "Flanders",
+      office: "President"
+    }
+  ];
+
+  let amount = 0;
+  let selectedCandidate = "Simpson, Lisa";
+  let paymentMethods = ["paypal", "direct"];
+  let selectedMethod = "paypal";
+
+  async function donate() {
+    console.log(`Just donated: ${amount} to ${selectedCandidate} via ${selectedMethod} payment`);
+    console.log(`lat: ${lat}, lng: ${lng}`);
+  }
 </script>
 
-<div>
+<form on:submit|preventDefault={donate}>
   <div class="field">
     <label class="label" for="amount">Enter Amount:</label>
-    <input class="input" id="amount" name="amount" type="number" />
+    <input bind:value={amount} class="input" id="amount" name="amount" type="number" />
   </div>
   <div class="field">
     <div class="control">
       <label class="label" for="amount">Select Payment Method:</label>
-      <input class="radio" type="radio" /> paypal
-      <input class="radio" type="radio" /> direct
+      {#each paymentMethods as method}
+        <input bind:group={selectedMethod} class="radio" type="radio" value={method} /> {method}
+      {/each}
     </div>
   </div>
   <div class="field">
     <label class="label" for="amount">Select Candidate:</label>
     <div class="select">
-      <select>
-        <option>Simpson, Lisa</option>
-        <option>Simpson, Maggie</option>
-        <option>Flanders, Ned</option>
+      <select bind:value={selectedCandidate}>
+        {#each candidateList as candidate}
+          <option>{candidate.lastName},{candidate.firstName}</option>
+        {/each}
       </select>
     </div>
   </div>
@@ -28,4 +61,5 @@
       <button class="button is-success is-fullwidth">Donate</button>
     </div>
   </div>
-</div>
+</form>
+<Coordinates bind:lat bind:lng />
