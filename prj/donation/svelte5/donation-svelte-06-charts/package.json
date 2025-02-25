@@ -1,14 +1,3 @@
-# Frappe Charts 
-
-We install the component in the normal way:
-
-~~~bash
-npm install -D svelte-frappe-charts
-~~~
-
-This will download the component and insert the entry in package.json:
-
-~~~json
 {
   "name": "donation-svelte",
   "private": true,
@@ -45,33 +34,3 @@ This will download the component and insert the entry in package.json:
     "vite": "^6.2.0"
   }
 }
-~~~
-
-Have a quick look at the type of charts available:
-
-- <https://frappe.io/charts/docs>
-
-This is the Svelte wrapper component for Frappe charts we are using:
-
-- <https://github.com/himynameisdave/svelte-frappe-charts>
-
-We can take the example from that site and use it as is to get started:
-
-~~~html
-<script>
-  import Chart from 'svelte-frappe-charts';
-
-  let data = {
-    labels: ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat'],
-    datasets: [
-      {
-        values: [10, 12, 3, 9, 8, 15, 9]
-      }
-    ]
-  };
-</script>
-
-<Chart data={data} type="line" />
-~~~
-
-We will place this on a page in the next step...

@@ -1,22 +1,3 @@
-# Charts Page
-
-Introduce an additional menu option:
-
-### src/ui/Menu.svete
-
-~~~html
-...
-       <a class="navbar-item" href="/charts"> Charts </a>
-...
-~~~
-
-<img src="img/22.png" style="zoom:150%;" />
-
-This is a new page:
-
-### routes/charts/+page.svelte
-
-~~~html
 <script lang="ts">
   import { subTitle } from "$lib/runes.svelte";
   // @ts-ignore
@@ -42,8 +23,3 @@ This is a new page:
     <img alt="Homer" src="/homer4.jpeg" width="300" />
   </div>
 </div>
-~~~
-
-The app now displays a simple chart:
-
-![](img/24.png)
