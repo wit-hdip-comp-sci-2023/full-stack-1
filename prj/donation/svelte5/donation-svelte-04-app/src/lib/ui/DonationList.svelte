@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { donations } from "$lib/runes.svelte";
+  import { latestDonations } from "$lib/runes.svelte";
 
   // let { donations } = $props();
 </script>
@@ -14,7 +14,7 @@
     </tr>
   </thead>
   <tbody>
-    {#each donations.currentDonations as donation}
+    {#each latestDonations.donations as donation}
       <tr>
         <td>
           {donation.amount}

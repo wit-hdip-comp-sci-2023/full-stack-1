@@ -16,7 +16,6 @@
       loggedInUser.email = email;
       loggedInUser.name = session.name;
       loggedInUser.token = session.token;
-      loggedInUser._id = session._id;
       localStorage.donation = JSON.stringify(loggedInUser);
       console.log(`Session: ${JSON.stringify(session)}`);
       goto("/donate");

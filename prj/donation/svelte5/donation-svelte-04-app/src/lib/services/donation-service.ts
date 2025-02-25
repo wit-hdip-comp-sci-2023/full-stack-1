@@ -1,7 +1,6 @@
 import axios from "axios";
 import type { Session, User } from "$lib/types/donation-types";
 import type { Candidate, Donation } from "$lib/types/donation-types";
-import { donations } from "$lib/runes.svelte";
 
 export const donationService = {
   baseUrl: "http://localhost:4000",
@@ -61,7 +60,6 @@ export const donationService = {
     try {
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
       const response = await axios.get(this.baseUrl + "/api/donations");
-      donations.currentDonations = response.data;
       return response.data;
     } catch (error) {
     console.log(error)

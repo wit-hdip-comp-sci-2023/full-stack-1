@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { loggedInUser } from "$lib/runes.svelte";
+  import { latestDonations, loggedInUser } from "$lib/runes.svelte";
   import { donationService } from "$lib/services/donation-service";
   import type { Donation } from "$lib/types/donation-types";
   import Coordinates from "$lib/ui/Coordinates.svelte";
@@ -32,6 +32,7 @@
           return;
         }
         message = `Thanks! You donated ${amount} to ${candidate.firstName} ${candidate.lastName}`;
+        latestDonations.donations = await donationService.getDonations(loggedInUser.token);
       }
     } else {
       message = "Please select amount, method and candidate";

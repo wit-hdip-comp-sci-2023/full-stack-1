@@ -1,3 +1,5 @@
+import type { Donation } from "./types/donation-types";
+
 export const subTitle = $state({ text: "" });
 export const loggedInUser = $state({ 
     email: "",
@@ -5,4 +7,4 @@ export const loggedInUser = $state({
     token: "",
     _id: ""
  });
- export const donations = $state({currentDonations:[]});
+ export const latestDonations = $state({donations: [] as Donation[]});
