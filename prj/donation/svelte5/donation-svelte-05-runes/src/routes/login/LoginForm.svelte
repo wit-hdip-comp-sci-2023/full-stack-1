@@ -13,12 +13,7 @@
     console.log(`attempting to log in email: ${email} with password: ${password}`);
     let session = await donationService.login(email, password);
     if (session) {
-      loggedInUser.email = email;
-      loggedInUser.name = session.name;
-      loggedInUser.token = session.token;
-      loggedInUser._id = session._id;
-      localStorage.donation = JSON.stringify(loggedInUser);
-      console.log(`Session: ${JSON.stringify(session)}`);
+      donationService.saveSession(session);
       goto("/donate");
     } else {
       email = "";

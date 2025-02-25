@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { loggedInUser } from "$lib/runes.svelte";
+  import { currentCandidates, loggedInUser } from "$lib/runes.svelte";
   import { donationService } from "$lib/services/donation-service";
   import type { Donation } from "$lib/types/donation-types";
   import Coordinates from "$lib/ui/Coordinates.svelte";
-
-  let { candidateList = [] } = $props();
 
   let amount = $state(0);
   let lat = $state(52.160858);
@@ -16,7 +14,9 @@
 
   async function donate() {
     if (selectedCandidate && amount && selectedMethod) {
-      const candidate = candidateList.find((candidate) => candidate._id === selectedCandidate);
+      const candidate = currentCandidates.candidates.find(
+        (candidate) => candidate._id === selectedCandidate
+      );
       if (candidate) {
         const donation: Donation = {
           amount: amount,
@@ -56,7 +56,7 @@
     <label class="label" for="amount">Select Candidate:</label>
     <div class="select">
       <select bind:value={selectedCandidate}>
-        {#each candidateList as candidate}
+        {#each currentCandidates.candidates as candidate}
           <option value={candidate._id}>{candidate.lastName},{candidate.firstName}</option>
         {/each}
       </select>

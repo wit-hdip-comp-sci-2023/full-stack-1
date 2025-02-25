@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { donations } = $props();
+  import { currentDonations } from "$lib/runes.svelte";
 </script>
 
 <table class="table is-fullwidth">
@@ -12,7 +12,7 @@
     </tr>
   </thead>
   <tbody>
-    {#each donations as donation}
+    {#each currentDonations.donations as donation}
       <tr>
         <td>
           {donation.amount}

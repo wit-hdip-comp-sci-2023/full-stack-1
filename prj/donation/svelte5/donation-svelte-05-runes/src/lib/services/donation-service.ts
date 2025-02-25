@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { Session, User } from "$lib/types/donation-types";
 import type { Candidate, Donation } from "$lib/types/donation-types";
-import { loggedInUser } from "$lib/runes.svelte";
+import { currentDonations, currentCandidates, loggedInUser } from "$lib/runes.svelte";
 
 export const donationService = {
   baseUrl: "http://localhost:4000",
@@ -29,14 +29,57 @@ export const donationService = {
           token: response.data.token,
           _id: response.data._id
         };
+        this.refreshDonationInfo();
         return session;
       }
-
       return null;
     } catch (error) {
       console.log(error);
       return null;
     }
+  },
+
+  saveSession(session: Session) {
+    loggedInUser.email = session.name;
+    loggedInUser.name = session.name;
+    loggedInUser.token = session.token;
+    loggedInUser._id = session._id;
+    localStorage.donation = JSON.stringify(loggedInUser);
+  },
+
+  async restoreSession() {
+    const savedLoggedInUser = localStorage.donation;
+    if (savedLoggedInUser) {
+      const session = JSON.parse(savedLoggedInUser);
+      loggedInUser.email = session.email;
+      loggedInUser.name = session.name;
+      loggedInUser.token = session.token;
+      loggedInUser._id = session._id;
+    }
+    await this.refreshDonationInfo();
+  },
+
+  clearSession() {
+    loggedInUser.email = "";
+    loggedInUser.name = "";
+    loggedInUser.token = "";
+    loggedInUser._id = "";
+    localStorage.removeItem("donation");
+  },
+
+  async refreshDonationInfo() {
+    if (loggedInUser.token) {
+    currentDonations.donations = await this.getDonations(loggedInUser.token);
+    currentCandidates.candidates = await this.getCandidates(loggedInUser.token);
+    }
+  },
+
+  disconnect() {
+    loggedInUser.email = "";
+    loggedInUser.name = "";
+    loggedInUser.token = "";
+    loggedInUser._id = "";
+    localStorage.removeItem("donation");
   },
 
   async donate(donation: Donation, token: string) {
@@ -46,7 +89,7 @@ export const donationService = {
         this.baseUrl + "/api/candidates/" + donation.candidate + "/donations",
         donation
       );
-      await this.getDonations(loggedInUser.token);
+      await this.refreshDonationInfo();
       return response.status == 200;
     } catch (error) {
       console.log(error);
