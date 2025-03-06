@@ -23,25 +23,25 @@ A component that just renders some static markup isn't very interesting. Let's a
 
 First, add a script tag to your component and declare a `name` variable:
 
-```svelte
+~~~html
 script>
   let name = 'Svelte';
 </script>
 
 <h1>Hello world!</h1>
-```
+~~~
 
 Then, we can refer to `name` in the markup:
 
-```svelte
+~~~html
 <h1>Hello {name}!</h1>
-```
+~~~
 
 Inside the curly braces, we can put any JavaScript we want. Try changing `name` to `name.toUpperCase()` for a shoutier greeting.
 
-```svelte
+~~~html
 <h1>Hello {name.toUpperCase()}!</h1>
-```
+~~~
 
 ## Dynamic attributes
 
@@ -50,23 +50,23 @@ Just like you can use curly braces to control text, you can use them to control 
 
 Our image is missing a `src` — let's add one:
 
-```svelte
+~~~html
 <img src={src} />
-```
+~~~
 
 That's better. But if you hover over the `<img>` in the editor, Svelte is giving us a warning:
 
-```
+~~~
 `<img>` element should have an alt attribute
-```
+~~~
 
 When building web apps, it's important to make sure that they're _accessible_ to the broadest possible userbase, including people with (for example) impaired vision or motion, or people without powerful hardware or good internet connections. Accessibility (shortened to a11y) isn't always easy to get right, but Svelte will help by warning you if you write inaccessible markup.
 
 In this case, we're missing the `alt` attribute that describes the image for people using screenreaders, or people with slow or flaky internet connections that can't download the image. Let's add one:
 
-```svelte
+~~~html
 <img src={src} alt="A man dances." />
-```
+~~~
 
 We can use curly braces _inside_ attributes. Try changing it to `"{name} dances."` — remember to declare a `name` variable in the `<script>` block.
 
@@ -74,15 +74,15 @@ We can use curly braces _inside_ attributes. Try changing it to `"{name} dances.
 
 It's not uncommon to have an attribute where the name and value are the same, like `src={src}`. Svelte gives us a convenient shorthand for these cases:
 
-```svelte
+~~~html
 <img {src} alt="{name} dances." />
-```
+~~~
 
 ## Styling
 
 Just like in HTML, you can add a `<style>` tag to your component. Let's add some styles to the `<p>` element:
 
-```svelte
+~~~html
 <p>This is a paragraph.</p>
 
 <style>
@@ -92,7 +92,7 @@ Just like in HTML, you can add a `<style>` tag to your component. Let's add some
     font-size: 2em;
   }
 </style>
-```
+~~~
 
 Importantly, these rules are _scoped to the component_. You won't accidentally change the style of `<p>` elements elsewhere in your app, as we'll see in the next step.
 
@@ -102,18 +102,18 @@ It would be impractical to put your entire app in a single component. Instead, w
 
 Add a `<script>` tag to the top of `App.svelte` that imports `Nested.svelte`...
 
-```svelte
+~~~html
 <script>
   import Nested from './Nested.svelte';
 </script>
-```
+~~~
 
 ...and include a `<Nested />` component:
 
-```svelte
+~~~html
 <p>This is a paragraph.</p>
 <Nested />
-```
+~~~
 
 Notice that even though `Nested.svelte` has a `<p>` element, the styles from `App.svelte` don't leak in.
 
@@ -127,9 +127,9 @@ But sometimes you need to render HTML directly into a component. For example, th
 
 In Svelte, you do this with the special `{@html ...}` tag:
 
-```svelte
+~~~html
 <p>{@html string}</p>
-```
+~~~
 
 > [!NOTE] Important: Svelte doesn't perform any sanitization of the expression inside `{@html ...}` before it gets inserted into the DOM. This isn't an issue if the content is something you trust like an article you wrote yourself. However if it's some untrusted user content, e.g. a comment on an article, then it's critical that you manually escape it, otherwise you risk exposing your users to <a href="https://owasp.org/www-community/attacks/xss/" target="_blank">Cross-Site Scripting</a> (XSS) attacks.
 
@@ -142,19 +142,19 @@ At the heart of Svelte is a powerful system of _reactivity_ for keeping the DOM 
 
 Make the `count` declaration reactive by wrapping the value with `$state(...)`:
 
-```js
+~~~js
 let count = $state(0);
-```
+~~~
 
 This is called a _rune_, and it's how you tell Svelte that `count` isn't an ordinary variable. Runes look like functions, but they're not — when you use Svelte, they're part of the language itself.
 
 All that's left is to implement `increment`:
 
-```js
+~~~js
 function increment() {
   count += 1;
 }
-```
+~~~
 
 ## Deep state
 
@@ -162,25 +162,25 @@ As we saw in the previous exercise, state reacts to _reassignments_. But it also
 
 Make `numbers` a reactive array:
 
-```js
+~~~js
 let numbers = $state([1, 2, 3, 4]);
-```
+~~~
 
 Now, when we change the array...
 
-```js
+~~~js
 function addNumber() {
   numbers[numbers.length] = numbers.length + 1;
 }
-```
+~~~
 
 ...the component updates. Or better still, we can `push` to the array instead:
 
-```js
+~~~js
 function addNumber() {
   numbers.push(numbers.length + 1);
 }
-```
+~~~
 
 > [!NOTE] Deep reactivity is implemented using [proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), and mutations to the proxy do not affect the original object.
 
@@ -188,16 +188,16 @@ function addNumber() {
 
 Often, you will need to _derive_ state from other state. For this, we have the `$derived` rune:
 
-```js
+~~~js
 let numbers = $state([1, 2, 3, 4]);
 let total = $derived(numbers.reduce((t, n) => t + n, 0));
-```
+~~~
 
 We can now use this in our markup:
 
-```svelte
+~~~html
 <p>{numbers.join(' + ')} = {total}</p>
-```
+~~~
 
 The expression inside the `$derived` declaration will be re-evaluated whenever its dependencies (in this case, just `numbers`) are updated. Unlike normal state, derived state is read-only.
 
@@ -209,29 +209,29 @@ Inside the `addNumber` function, we've added a `console.log` statement. But if y
 
 That's because `numbers` is a reactive [proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). There are a couple of things we can do. Firstly, we can create a non-reactive _snapshot_ of the state with `$state.snapshot(...)`:
 
-```js
+~~~js
 function addNumber() {
   numbers.push(numbers.length + 1);
   console.log($state.snapshot(numbers));
 }
-```
+~~~
 
 Alternatively, we can use the `$inspect` rune to automatically log a snapshot of the state whenever it changes. This code will automatically be stripped out of your production build:
 
-```js
+~~~js
 function addNumber() {
   numbers.push(numbers.length + 1);
   ---console.log($state.snapshot(numbers));---
 }
 
 $inspect(numbers);
-```
+~~~
 
 You can customise how the information is displayed by using `$inspect(...).with(fn)` — for example, you can use `console.trace` to see where the state change originated from:
 
-```js
+~~~js
 $inspect(numbers).with(console.trace);
-```
+~~~
 
 ## Effects
 
@@ -243,7 +243,7 @@ The thing that reacts is called an _effect_. You've already encountered effects 
 
 Let's say we want to use `setInterval` to keep track of how long the component has been mounted. Create the effect:
 
-```svelte
+~~~html
 <script>
   let elapsed = $state(0);
   let interval = $state(1000);
@@ -254,13 +254,13 @@ Let's say we want to use `setInterval` to keep track of how long the component h
     }, interval);
   });
 </script>
-```
+~~~
 
 Click the 'speed up' button a few times and notice that `elapsed` ticks up faster, because we're calling `setInterval` each time `interval` gets smaller.
 
 If we then click the 'slow down' button... well, it doesn't work. That's because we're not clearing out the old intervals when the effect updates. We can fix that by returning a cleanup function:
 
-```js
+~~~js
 $effect(() => {
   const id = setInterval(() => {
     elapsed += 1;
@@ -270,7 +270,7 @@ $effect(() => {
     clearInterval(id);
   };
 });
-```
+~~~
 
 The cleanup function is called immediately before the effect function re-runs when `interval` changes, and also when the component is destroyed.
 
@@ -284,21 +284,21 @@ In the preceding exercises, we used runes to add reactivity inside components. B
 
 The `<Counter>` components in this exercise are all importing the `counter` object from `shared.js`. But it's a normal object, and as such nothing happens when you click the buttons. Wrap the object in `$state(...)`:
 
-```js
+~~~js
 export const counter = $state({
   count: 0
 });
-```
+~~~
 
 This causes an error, because you can't use runes in normal `.js` files, only `.svelte.js` files. Let's fix that — rename the file to `shared.svelte.js`.
 
 Then, update the import declaration in `Counter.svelte`:
 
-```svelte
+~~~html
 <script>
   import { counter } from './shared.svelte.js';
 </script>
-```
+~~~
 
 Now, when you click any button, all three update simultaneously.
 
@@ -312,28 +312,28 @@ So far, we've dealt exclusively with internal state — that is to say, the valu
 
 In any real application, you'll need to pass data from one component down to its children. To do that, we need to declare _properties_, generally shortened to 'props'. In Svelte, we do that with the `$props` rune. Edit the `Nested.svelte` component:
 
-```svelte
+~~~html
 <script>
   let { answer } = $props();
 </script>
-```
+~~~
 
 ## Default values
 
 We can easily specify default values for props in `Nested.svelte`:
 
-```svelte
+~~~html
 <script>
   let { answer = 'a mystery' } = $props();
 </script>
-```
+~~~
 
 If we now add a second component _without_ an `answer` prop, it will fall back to the default:
 
-```svelte
+~~~html
 <Nested answer={42}/>
 <Nested />
-```
+~~~
 
 ## Spread props
 
@@ -341,38 +341,38 @@ In this exercise, in `App.svelte` we've forgotten to pass the `name` prop expect
 
 We _could_ fix it by adding the prop...
 
-```svelte
+~~~html
 <PackageInfo
   name={pkg.name}
   version={pkg.version}
   description={pkg.description}
   website={pkg.website}
 />
-```
+~~~
 
 ...but since the properties of `pkg` correspond to the component's expected props, we can 'spread' them onto the component instead:
 
-```svelte
+~~~html
 <PackageInfo {...pkg} />
-```
+~~~
 
 > [!NOTE] Conversely, in `PackageInfo.svelte` you can get an object containing all the props that were passed into a component using a rest property...
 >
-> ```js
+> ~~~js
 > let { name, ...stuff } = $props();
-> ```
+> ~~~
 >
 > ...or by skipping [destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) altogether:
 >
-> ```js
+> ~~~js
 > let stuff = $props();
-> ```
+> ~~~
 >
 > ...in which case you can access the properties by their object paths:
 >
-> ```js
+> ~~~js
 > console.log(stuff.name, stuff.version, stuff.description, stuff.website);
-> ```
+> ~~~
 
 # Logic
 
@@ -383,7 +383,7 @@ HTML doesn't have a way of expressing _logic_, like conditionals and loops. Svel
 
 To conditionally render some markup, we wrap it in an `if` block. Let's add some text that appears when `count` is greater than `10`:
 
-```svelte
+~~~html
 <button onclick={increment}>
   Clicked {count}
   {count === 1 ? 'time' : 'times'}
@@ -392,20 +392,20 @@ To conditionally render some markup, we wrap it in an `if` block. Let's add some
 {#if count > 10}
   <p>{count} is greater than 10</p>
 {/if}
-```
+~~~
 
 
 ## Else blocks
 
 Just like in JavaScript, an `if` block can have an `else` block:
 
-```svelte
+~~~html
 {#if count > 10}
   <p>{count} is greater than 10</p>
 {:else}
   <p>{count} is between 0 and 10</p>
 {/if}
-```
+~~~
 
 `{#...}` opens a block. `{/...}` closes a block. `{:...}` _continues_ a block. Congratulations — you've already learned almost all the syntax Svelte adds to HTML.
 
@@ -414,7 +414,7 @@ Just like in JavaScript, an `if` block can have an `else` block:
 
 Multiple conditions can be 'chained' together with `else if`:
 
-```svelte
+~~~html
 
 {#if count > 10}
   <p>{count} is greater than 10</p>
@@ -423,7 +423,7 @@ Multiple conditions can be 'chained' together with `else if`:
 {:else}
   <p>{count} is between 5 and 10</p>
 {/if}
-```
+~~~
 
 ## Each blocks
 
@@ -431,7 +431,7 @@ When building user interfaces you'll often find yourself working with lists of d
 
 Instead of laboriously copying, pasting and editing, we can get rid of all but the first button, then use an `each` block:
 
-```svelte
+~~~html
 <div>
   {#each colors as color}
     <button
@@ -442,13 +442,13 @@ Instead of laboriously copying, pasting and editing, we can get rid of all but t
     ></button>
   {/each}
 </div>
-```
+~~~
 
 > [!NOTE] The expression (`colors`, in this case) can be any iterable or array-like object — in other words, anything that works with [`Array.from`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from).
 
 Now we need to use the `color` variable in place of `"red"`:
 
-```svelte
+~~~html
 <div>
   {#each colors as color}
     <button
@@ -459,11 +459,11 @@ Now we need to use the `color` variable in place of `"red"`:
     ></button>
   {/each}
 </div>
-```
+~~~
 
 You can get the current _index_ as a second argument, like so:
 
-```svelte
+~~~html
 <div>
   {#each colors as color, i}
     <button
@@ -474,7 +474,7 @@ You can get the current _index_ as a second argument, like so:
     >{i + 1}</button>
   {/each}
 </div>
-```
+~~~
 
 ## Keyed each blocks
 
@@ -493,11 +493,11 @@ One way to fix it would be to make `emoji` a [`$derived`](derived-state) value. 
 
 To do that, we specify a unique _key_ for each iteration of the `each` block:
 
-```svelte
+~~~html
 {#each things as thing (thing.id)}
   <Thing name={thing.name}/>
 {/each}
-```
+~~~
 
 > [!NOTE] You can use any object as the key, as Svelte uses a `Map` internally — in other words you could do `(thing)` instead of `(thing.id)`. Using a string or number is generally safer, however, since it means identity persists without referential equality, for example when updating with fresh data from an API server.
 
@@ -505,7 +505,7 @@ To do that, we specify a unique _key_ for each iteration of the `each` block:
 
 Most web applications have to deal with asynchronous data at some point. Svelte makes it easy to _await_ the value of [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises) directly in your markup:
 
-```svelte
+~~~html
 {#await promise}
   <p>...rolling</p>
 {:then number}
@@ -513,17 +513,17 @@ Most web applications have to deal with asynchronous data at some point. Svelte 
 {:catch error}
   <p style="color: red">{error.message}</p>
 {/await}
-```
+~~~
 
 > [!NOTE] Only the most recent `promise` is considered, meaning you don't need to worry about race conditions.
 
 If you know that your promise can't reject, you can omit the `catch` block. You can also omit the first block if you don't want to show anything until the promise resolves:
 
-```svelte
+~~~html
 {#await promise then number}
   <p>you rolled a {number}!</p>
 {/await}
-```
+~~~
 
 # Events
 
@@ -531,25 +531,25 @@ If you know that your promise can't reject, you can omit the `catch` block. You 
 
 As we've briefly seen already, you can listen to any DOM event on an element (such as click or [pointermove](https://developer.mozilla.org/en-US/docs/Web/API/Element/pointermove_event)) with an `on<name>` function:
 
-```svelte
+~~~html
 <div onpointermove={onpointermove}>
   The pointer is at {Math.round(m.x)} x {Math.round(m.y)}
 </div>
-```
+~~~
 
 Like with any other property where the name matches the value, we can use the short form:
 
-```svelte
+~~~html
 <div {onpointermove}>
   The pointer is at {Math.round(m.x)} x {Math.round(m.y)}
 </div>
-```
+~~~
 
 ## Inline handlers
 
 You can also declare event handlers inline:
 
-```svelte
+~~~html
 
 <script>
   let m = $state({ x: 0, y: 0 });
@@ -568,7 +568,7 @@ You can also declare event handlers inline:
 >
   The pointer is at {m.x} x {m.y}
 </div>
-```
+~~~
 
 ## Capturing
 
@@ -576,11 +576,11 @@ Normally, event handlers run during the [_bubbling_](https://developer.mozilla.o
 
 Sometimes, you want handlers to run during the _capture_ phase instead. Add `capture` to the end of the event name:
 
-```svelte
+~~~html
 <div onkeydowncapture={(e) => alert(`<div> ${e.key}`)} role="presentation">
   <input onkeydowncapture={(e) => alert(`<input> ${e.key}`)} />
 </div>
-```
+~~~
 
 Now, the relative order is reversed. If both capturing and non-capturing handlers exist for a given event, the capturing handlers will run first.
 
@@ -588,37 +588,37 @@ Now, the relative order is reversed. If both capturing and non-capturing handler
 
 You can pass event handlers to components like any other prop. In `Stepper.svelte`, add `increment` and `decrement` props...
 
-```svelte
+~~~html
 <script>
   let { increment, decrement } = $props();
 </script>
-```
+~~~
 
 ...and wire them up:
 
-```svelte
+~~~html
 <button onclick={decrement}>-1</button>
 <button onclick={increment}>+1</button>
-```
+~~~
 
 In `App.svelte`, define the handlers:
 
-```svelte
+~~~html
 <Stepper
   increment={() => value += 1}
   decrement={() => value -= 1}
 />
-```
+~~~
 
 ## Spreading events
 
 We can also [spread](spread-props) event handlers directly onto elements. Here, we've defined an `onclick` handler in `App.svelte` — all we need to do is pass the props to the `<button>` in `BigRedButton.svelte`:
 
-```svelte
+~~~html
 <button {...props}>
   Push
 </button>
-```
+~~~
 
 # Bindings
 
@@ -630,9 +630,9 @@ Sometimes it's useful to break that rule. Take the case of the `<input>` element
 
 Instead, we can use the `bind:value` directive:
 
-```svelte
+~~~html
 <input bind:value={name}>
-```
+~~~
 
 This means that not only will changes to the value of `name` update the input value, but changes to the input value will update `name`.
 
@@ -642,7 +642,7 @@ In the DOM, every input value is a string. That's unhelpful when you're dealing 
 
 With `bind:value`, Svelte takes care of it for you:
 
-```svelte
+~~~html
 <label>
   <input type="number" bind:value={a} min="0" max="10" />
   <input type="range" bind:value={a} min="0" max="10" />
@@ -652,26 +652,26 @@ With `bind:value`, Svelte takes care of it for you:
   <input type="number" bind:value={b} min="0" max="10" />
   <input type="range" bind:value={b} min="0" max="10" />
 </label>
-```
+~~~
 
 ## Checkbox inputs
 
 Checkboxes are used for toggling between states. Instead of binding to `input.value`, we bind to `input.checked`:
 
-```svelte
+~~~html
 <input type="checkbox" bind:checked={yes}>
-```
+~~~
 
 ## Select bindings
 
 We can also use `bind:value` with `<select>` elements:
 
-```svelte
+~~~html
 <select
     bind:value={selected}
     onchange={() => answer = ''}
 >
-```
+~~~
 
 Note that the `<option>` values are objects rather than strings. Svelte doesn't mind.
 
@@ -683,25 +683,25 @@ If you have multiple `type="radio"` or `type="checkbox"` inputs relating to the 
 
 Add `bind:group={scoops}` to the radio inputs...
 
-```svelte
+~~~html
 <input
   type="radio"
   name="scoops"
   value={number}
   bind:group={scoops}
 />
-```
+~~~
 
 ...and `bind:group={flavours}` to the checkbox inputs:
 
-```svelte
+~~~html
 <input
   type="checkbox"
   name="flavours"
   value={flavour}
   bind:group={flavours}
 />
-```
+~~~
 
 ## Select multiple
 
@@ -709,7 +709,7 @@ A `<select>` element can have a `multiple` attribute, in which case it will popu
 
 Replace the checkboxes with a `<select multiple>`:
 
-```svelte
+~~~html
 <h2>Flavours</h2>
 
 <select multiple bind:value={flavours}>
@@ -717,7 +717,7 @@ Replace the checkboxes with a `<select multiple>`:
    <option>{flavour}</option>
   {/each}
 </select>
-```
+~~~
 
 Note that we're able to omit the `value` attribute on the `<option>`, since the value is identical to the element's contents.
 
@@ -727,15 +727,15 @@ Note that we're able to omit the `value` attribute on the `<option>`, since the 
 
 The `<textarea>` element behaves similarly to a text input in Svelte — use `bind:value`:
 
-```svelte
+~~~html
 <textarea bind:value={value}></textarea>
-```
+~~~
 
 In cases like these, where the names match, we can also use a shorthand form:
 
-```svelte
+~~~html
 <textarea bind:value></textarea>
-```
+~~~
 
 This applies to all bindings, not just `<textarea>` bindings.
 
@@ -746,23 +746,23 @@ This applies to all bindings, not just `<textarea>` bindings.
 
 Like any other attribute, you can specify classes with a JavaScript attribute. Here, we could add a `flipped` class to the card:
 
-```svelte
+~~~html
 <button
   class="card {flipped ? 'flipped' : ''}"
   onclick={() => flipped = !flipped}
 >
-```
+~~~
 
 This works as expected — if you click on the card now, it'll flip.
 
 We can make it nicer though. Adding or removing a class based on some condition is such a common pattern in UI development that Svelte allows you to pass an object or array that is converted to a string by [clsx](https://github.com/lukeed/clsx).
 
-```svelte
+~~~html
 <button
   class={["card", { flipped }]}
   onclick={() => flipped = !flipped}
 >
-```
+~~~
 
 This means 'always add the `card` class, and add the `flipped` class whenever `flipped` is truthy'.
 
@@ -770,17 +770,17 @@ This means 'always add the `card` class, and add the `flipped` class whenever `f
 
 As with `class`, you can write your inline `style` attributes literally, because Svelte is really just HTML with fancy bits:
 
-```svelte
+~~~html
 <button
   class="card"
   style="transform: {flipped ? 'rotateY(0)' : ''}; --bg-1: palegoldenrod; --bg-2: black; --bg-3: goldenrod"
   onclick={() => flipped = !flipped}
 >
-```
+~~~
 
 When you have a lot of styles, it can start to look a bit wacky. We can tidy things up by using the `style:` directive:
 
-```svelte
+~~~html
 <button
   class="card"
  style:transform={flipped ? 'rotateY(0)' : ''}
@@ -789,7 +789,7 @@ When you have a lot of styles, it can start to look a bit wacky. We can tidy thi
   style:--bg-3="goldenrod"
   onclick={() => flipped = !flipped}
 >
-```
+~~~
 
 ## Component styles
 
@@ -797,7 +797,7 @@ Often, you need to influence the styles inside a child component. Perhaps we wan
 
 One way to do this is with the `:global` CSS modifier, which allows you to indiscriminately target elements inside other components:
 
-```svelte
+~~~html
 <style>
   .boxes :global(.box:nth-child(1)) {
     background-color: red;
@@ -811,7 +811,7 @@ One way to do this is with the `:global` CSS modifier, which allows you to indis
     background-color: blue;
   }
 </style>
-```
+~~~
 
 But there are lots of reasons _not_ to do that. For one thing, it's extremely verbose. For another, it's brittle — any changes to the implementation details of `Box.svelte` could break the selector.
 
@@ -819,7 +819,7 @@ Most of all though, it's rude. Components should be able to decide for themselve
 
 Inside `Box.svelte`, change `background-color` so that it is determined by a [CSS custom property](https://developer.mozilla.org/en-US/docs/Web/CSS/--*):
 
-```svelte
+~~~html
 <style>
   .box {
     width: 5em;
@@ -829,27 +829,27 @@ Inside `Box.svelte`, change `background-color` so that it is determined by a [CS
     background-color: var(--color, #ddd);
   }
 </style>
-```
+~~~
 
 Any parent element (such as `<div class="boxes">`) can set the value of `--color`, but we can also set it on individual components:
 
-```svelte
+~~~html
 <div class="boxes">
   <Box --color="red" />
   <Box --color="green" />
   <Box --color="blue" />
 </div>
-```
+~~~
 
 The values can be dynamic, like any other attribute.
 
 > [!NOTE] This feature works by wrapping each component in an element with `display: contents`, where needed, and applying the custom properties to it. If you inspect the elements, you'll see markup like this:
 >
-> ```svelte
+> ~~~html
 > <svelte-css-wrapper style="display: contents; --color: red;">
 >   <!-- contents -->
 > </svelte-css-wrapper>
-> ```
+> ~~~
 >
 > Because of `display: contents` this won't affect your layout, but the extra element _can_ affect selectors like `.parent > .child`.
 
@@ -869,7 +869,7 @@ In this app, you can scribble on the `<canvas>`, and change colours and brush si
 
 We can fix that with an action. Import `trapFocus` from `actions.svelte.js`...
 
-```svelte
+~~~html
 <script>
   import Canvas from './Canvas.svelte';
   import { trapFocus } from './actions.svelte.js';
@@ -880,28 +880,28 @@ We can fix that with an action. Import `trapFocus` from `actions.svelte.js`...
   let size = $state(10);
   let showMenu = $state(true);
 </script>
-```
+~~~
 
 ...then add it to the menu with the `use:` directive:
 
-```svelte
+~~~html
 <div class="menu" use:trapFocus>
-```
+~~~
 
 Let's take a look at the `trapFocus` function in `actions.svelte.js`. An action function is called with a `node` — the `<div class="menu">` in our case — when the node is mounted to the DOM. Inside the action, we have an [effect](effects).
 
 First, we need to add an event listener that intercepts Tab key presses:
 
-```js
+~~~js
 $effect(() => {
   focusable()[0]?.focus();
   node.addEventListener('keydown', handleKeydown);
 });
-```
+~~~
 
 Second, we need to do some cleanup when the node is unmounted — removing the event listener, and restoring focus to where it was before the element mounted:
 
-```js
+~~~js
 $effect(() => {
   focusable()[0]?.focus();
   node.addEventListener('keydown', handleKeydown);
@@ -911,7 +911,7 @@ $effect(() => {
     previous?.focus();
   };
 });
-```
+~~~
 
 Now, when you open the menu, you can cycle through the options with the Tab key.
 
@@ -923,7 +923,7 @@ In this exercise, we want to add a tooltip to the `<button>` using the [`Tippy.j
 
 First, the action needs to accept a function that returns some options to pass to Tippy:
 
-```js
+~~~js
 function tooltip(node, fn) {
   $effect(() => {
     const tooltip = tippy(node, fn());
@@ -931,17 +931,17 @@ function tooltip(node, fn) {
     return tooltip.destroy;
   });
 }
-```
+~~~
 
 > [!NOTE] We're passing in a function, rather than the options themselves, because the `tooltip` function does not re-run when the options change.
 
 Then, we need to pass the options into the action:
 
-```svelte
+~~~html
 <button use:tooltip={() => ({ content })}>
   Hover me
 </button>
-```
+~~~
 
 > [!NOTE] In Svelte 4, actions returned an object with `update` and `destroy` methods. This still works but we recommend using `$effect` instead, as it provides more flexibility and granularity.
 
@@ -954,41 +954,41 @@ We can make more appealing user interfaces by gracefully transitioning elements 
 
 First, import the `fade` function from `svelte/transition`...
 
-```svelte
+~~~html
 <script>
   import { fade } from 'svelte/transition';
 
   let visible = $state(true);
 </script>
-```
+~~~
 
 ...then add it to the `<p>` element:
 
-```svelte
+~~~html
 <p transition:fade>
   Fades in and out
 </p>
-```
+~~~
 
 ## Adding parameters
 
 Transition functions can accept parameters. Replace the `fade` transition with `fly`...
 
-```svelte
+~~~html
 <script>
   import { fly } from 'svelte/transition';
 
   let visible = $state(true);
 </script>
-```
+~~~
 
 ...and apply it to the `<p>` along with some options:
 
-```svelte
+~~~html
 <p transition:fly={{ y: 200, duration: 2000 }}>
   Flies in and out
 </p>
-```
+~~~
 
 Note that the transition is _reversible_ — if you toggle the checkbox while the transition is ongoing, it transitions from the current point, rather than the beginning or the end.
 
@@ -996,17 +996,17 @@ Note that the transition is _reversible_ — if you toggle the checkbox while th
 
 Instead of the `transition` directive, an element can have an `in` or an `out` directive, or both together. Import `fade` alongside `fly`...
 
-```js
+~~~js
 import { fade, fly } from 'svelte/transition';
-```
+~~~
 
 ...then replace the `transition` directive with separate `in` and `out` directives:
 
-```svelte
+~~~html
 <p in:fly={{ y: 200, duration: 2000 }} out:fade>
   Flies in, fades out
 </p>
-```
+~~~
 
 In this case, the transitions are _not_ reversed.
 
@@ -1014,7 +1014,7 @@ In this case, the transitions are _not_ reversed.
 
 The `svelte/transition` module has a handful of built-in transitions, but it's very easy to create your own. By way of example, this is the source of the `fade` transition:
 
-```js
+~~~js
 function fade(node, { delay = 0, duration = 400 }) {
   const o = +getComputedStyle(node).opacity;
 
@@ -1024,7 +1024,7 @@ function fade(node, { delay = 0, duration = 400 }) {
     css: (t) => `opacity: ${t * o}`
   };
 }
-```
+~~~
 
 The function takes two arguments — the node to which the transition is applied, and any parameters that were passed in — and returns a transition object which can have the following properties:
 
@@ -1041,18 +1041,18 @@ Most of the time you should return the `css` property and _not_ the `tick` prope
 For example, the `fade` transition generates a CSS animation somewhat like this:
 
 <!-- prettier-ignore-start -->
-```css
+~~~css
 0% { opacity: 0 }
 10% { opacity: 0.1 }
 20% { opacity: 0.2 }
 /* ... */
 100% { opacity: 1 }
-```
+~~~
 <!-- prettier-ignore-end -->
 
 We can get a lot more creative though. Let's make something truly gratuitous:
 
-```svelte
+~~~html
 <script>
   import { fade } from 'svelte/transition';
   import { elasticOut } from 'svelte/easing';
@@ -1076,7 +1076,7 @@ We can get a lot more creative though. Let's make something truly gratuitous:
     };
   }
 </script>
-```
+~~~
 
 Remember: with great power comes great responsibility.
 
@@ -1084,7 +1084,7 @@ Remember: with great power comes great responsibility.
 
 While you should generally use CSS for transitions as much as possible, there are some effects that can't be achieved without JavaScript, such as a typewriter effect:
 
-```js
+~~~js
 function typewriter(node, { speed = 1 }) {
   const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
 
@@ -1103,13 +1103,13 @@ function typewriter(node, { speed = 1 }) {
     }
   };
 }
-```
+~~~
 
 ## Transition events
 
 It can be useful to know when transitions are beginning and ending. Svelte dispatches events that you can listen to like any other DOM event:
 
-```svelte
+~~~html
 <p
   transition:fly={{ y: 200, duration: 2000 }}
  onintrostart={() => status = 'intro started'}
@@ -1119,7 +1119,7 @@ It can be useful to know when transitions are beginning and ending. Svelte dispa
 >
   Flies in and out
 </p>
-```
+~~~
 
 ## Global transitions
 
@@ -1129,11 +1129,11 @@ Instead, we'd like transitions to not only play when individual items are added 
 
 We can achieve this with a _global_ transition, which plays when _any_ block containing the transitions is added or removed:
 
-```svelte
+~~~html
 <div transition:slide|global>
   {item}
 </div>
-```
+~~~
 
 > [!NOTE] In Svelte 3, transitions were global by default and you had to use the `|local` modifier to make them local.
 
@@ -1143,12 +1143,11 @@ Key blocks destroy and recreate their contents when the value of an expression c
 
 Here, for example, we'd like to play the `typewriter` transition from `transition.js` whenever the loading message, i.e. `i` changes. Wrap the `<p>` element in a key block:
 
-```svelte
+~~~html
 {#key i}
   <p in:typewriter={{ speed: 10 }}>
     {messages[i] || ''}
   </p>
 {/key}
-```
-
+~~~
 
