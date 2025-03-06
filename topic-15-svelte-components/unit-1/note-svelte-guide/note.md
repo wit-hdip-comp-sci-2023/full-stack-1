@@ -11,7 +11,7 @@ Svelte Tutorial
 
 ---
 
-# Introduction
+# Components
 
 An introduction to Svelte reporposed from [here](https://svelte.dev/tutorial/svelte/welcome-to-svelte).
 
@@ -326,6 +326,26 @@ We can now use this in our markup:
 ~~~
 
 The expression inside the `$derived` declaration will be re-evaluated whenever its dependencies (in this case, just `numbers`) are updated. Unlike normal state, derived state is read-only.
+
+### App.svelte
+
+~~~svelte
+<script>
+  let numbers = $state([1, 2, 3, 4]);
+  let total = $derived(numbers.reduce((t, n) => t + n, 0));
+
+  function addNumber() {
+    numbers.push(numbers.length + 1);
+  }
+</script>
+
+<p>{numbers.join(' + ')} = {total}</p>
+
+<button onclick={addNumber}>
+  Add a number
+</button>
+~~~
+
 
 ## Inspecting state
 
