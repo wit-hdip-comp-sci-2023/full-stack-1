@@ -361,6 +361,8 @@ $inspect(numbers).with(console.trace);
   function addNumber() {
     numbers.push(numbers.length + 1);
   }
+
+  $inspect(numbers).with(console.trace);
 </script>
 
 <p>{numbers.join(' + ')} = {total}</p>
@@ -371,6 +373,10 @@ $inspect(numbers).with(console.trace);
 ~~~
 
 ![](img/05.png)
+
+#### Developer Console
+
+![](img/06.png)
 
 ## Effects
 
@@ -417,6 +423,32 @@ If the effect function doesn't read any state when it runs, it will only run onc
 
 > [!NOTE] Effects do not run during server-side rendering.
 
+### App.svelte
+
+~~~html
+<script>
+  let elapsed = $state(0);
+  let interval = $state(1000);
+
+  $effect(() => {
+    const id = setInterval(() => {
+      elapsed += 1;
+    }, interval);
+
+    return () => {
+      clearInterval(id);
+    };
+  });
+</script>
+
+<button onclick={() => interval /= 2}>speed up</button>
+<button onclick={() => interval *= 2}>slow down</button>
+
+<p>elapsed: {elapsed}</p>
+~~~
+
+![](img/07.png)
+
 ## Universal reactivity
 
 In the preceding exercises, we used runes to add reactivity inside components. But we can also use runes _outside_ components, for example to share some global state.
@@ -443,6 +475,41 @@ Now, when you click any button, all three update simultaneously.
 
 > [!NOTE] You cannot export a `$state` declaration from a module if the declaration is reassigned (rather than just mutated), because the importers would have no way to know about it.
 
+
+#### shared.svelte.ts
+
+~~~javascript
+export const counter = $state({
+  count: 0
+});
+~~~
+
+#### Counter.svelte
+
+~~~html
+<script>
+  import { counter } from './shared.svelte.js';
+</script>
+
+<button onclick={() => counter.count += 1}>
+  clicks: {counter.count}
+</button>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Counter from './Counter.svelte';
+</script>
+
+<Counter />
+<Counter />
+<Counter />
+~~~
+
+![](img/08.png)
+
 # Props
 
 ## Declaring props
@@ -456,6 +523,28 @@ In any real application, you'll need to pass data from one component down to its
   let { answer } = $props();
 </script>
 ~~~
+
+#### Nested.svelte
+
+~~~html
+<script>
+  let { answer } = $props();
+</script>
+
+<p>The answer is {answer}</p>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Nested from './Nested.svelte';
+</script>
+
+<Nested answer={42} />
+~~~
+
+![](img/09.png)
 
 ## Default values
 
@@ -473,6 +562,32 @@ If we now add a second component _without_ an `answer` prop, it will fall back t
 <Nested answer={42}/>
 <Nested />
 ~~~
+
+
+#### Nested.svelte
+
+~~~html
+<script>
+  let { answer = 'a mystery' } = $props();
+</script>
+
+<p>The answer is {answer}</p>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Nested from './Nested.svelte';
+</script>
+
+<Nested answer={42} />
+<Nested />
+~~~
+
+![](img/10.png)
+
+
 
 ## Spread props
 
@@ -513,6 +628,38 @@ We _could_ fix it by adding the prop...
 > console.log(stuff.name, stuff.version, stuff.description, stuff.website);
 > ~~~
 
+#### Packageinfo.svelte
+
+~~~html
+<script>
+  let { name, version, description, website } = $props();
+</script>
+
+<p>
+  The <code>{name}</code> package is {description}. Download version {version} from
+  <a href="https://www.npmjs.com/package/{name}">npm</a> and <a href={website}>learn more here</a>
+</p>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import PackageInfo from './PackageInfo.svelte';
+
+  const pkg = {
+    name: 'svelte',
+    version: 5,
+    description: 'blazing fast',
+    website: 'https://svelte.dev'
+  };
+</script>
+
+<PackageInfo {...pkg} />
+~~~
+
+![](img/11.png)
+
 # Logic
 
 ## If blocks
@@ -533,6 +680,31 @@ To conditionally render some markup, we wrap it in an `if` block. Let's add some
 {/if}
 ~~~
 
+#### App.svelte
+
+~~~html
+<script>
+  let count = $state(0);
+
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<button onclick={increment}>
+  Clicked {count}
+  {count === 1 ? 'time' : 'times'}
+</button>
+
+{#if count > 10}
+  <p>{count} is greater than 10</p>
+{/if}
+~~~
+
+![](img/12.png)
+
+
+![](img/13.png)
 
 ## Else blocks
 
@@ -548,6 +720,30 @@ Just like in JavaScript, an `if` block can have an `else` block:
 
 `{#...}` opens a block. `{/...}` closes a block. `{:...}` _continues_ a block. Congratulations — you've already learned almost all the syntax Svelte adds to HTML.
 
+#### App.svelte
+
+~~~html
+<script>
+  let count = $state(0);
+
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<button onclick={increment}>
+  Clicked {count}
+  {count === 1 ? 'time' : 'times'}
+</button>
+
+{#if count > 10}
+  <p>{count} is greater than 10</p>
+{:else}
+  <p>{count} is between 0 and 10</p>
+{/if}
+~~~
+
+![](img/14.png)
 
 ## Else-if blocks
 
