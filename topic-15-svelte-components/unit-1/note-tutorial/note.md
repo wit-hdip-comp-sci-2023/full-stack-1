@@ -56,8 +56,6 @@ Inside the curly braces, we can put any JavaScript we want. Try changing `name` 
 ~~~
 
 
-<h1>Hello world!</h1>
-
 ## Dynamic attributes
 
 
@@ -93,6 +91,17 @@ It's not uncommon to have an attribute where the name and value are the same, li
 <img {src} alt="{name} dances." />
 ~~~
 
+#### App.svelte
+
+~~~html
+<script>
+  let src = '/tutorial/image.gif';
+  let name = 'Rick Astley';
+</script>
+
+<img {src} alt="{name} dances." />
+~~~
+
 ## Styling
 
 Just like in HTML, you can add a `<style>` tag to your component. Let's add some styles to the `<p>` element:
@@ -110,6 +119,20 @@ Just like in HTML, you can add a `<style>` tag to your component. Let's add some
 ~~~
 
 Importantly, these rules are _scoped to the component_. You won't accidentally change the style of `<p>` elements elsewhere in your app, as we'll see in the next step.
+
+#### App.svelte
+
+~~~html
+<p>This is a paragraph.</p>
+
+<style>
+  p {
+    color: goldenrod;
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 2em;
+  }
+</style>
+~~~
 
 ## Nested components
 
@@ -133,6 +156,34 @@ Add a `<script>` tag to the top of `App.svelte` that imports `Nested.svelte`...
 Notice that even though `Nested.svelte` has a `<p>` element, the styles from `App.svelte` don't leak in.
 
 > [!NOTE] Component names are capitalised, to distinguish them from HTML elements.
+
+#### Nested.svelte
+
+~~~html
+<p>This is another paragraph.</p>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Nested from './Nested.svelte';
+</script>
+
+<p>This is a paragraph.</p>
+<Nested />
+
+<style>
+  p {
+    color: goldenrod;
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 2em;
+  }
+</style>
+~~~
+
+![](img/01.png)
+
 
 ## HTML tags
 
