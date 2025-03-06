@@ -760,6 +760,31 @@ Multiple conditions can be 'chained' together with `else if`:
 {/if}
 ~~~
 
+~~~html
+<script>
+  let count = $state(0);
+
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<button onclick={increment}>
+  Clicked {count}
+  {count === 1 ? 'time' : 'times'}
+</button>
+
+{#if count > 10}
+  <p>{count} is greater than 10</p>
+{:else if count < 5}
+  <p>{count} is less than 5</p>
+{:else}
+  <p>{count} is between 5 and 10</p>
+{/if}
+~~~
+
+![](img/16.png)
+
 ## Each blocks
 
 When building user interfaces you'll often find yourself working with lists of data. In this exercise, we've repeated the `<button>` markup multiple times — changing the colour each time — but there's still more to add.
@@ -811,6 +836,63 @@ You can get the current _index_ as a second argument, like so:
 </div>
 ~~~
 
+### App.svelte
+
+~~~html
+<script>
+  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+  let selected = $state(colors[0]);
+</script>
+
+<h1 style="color: {selected}">Pick a colour</h1>
+
+<div>
+  {#each colors as color, i}
+    <button
+      style="background: {color}"
+      aria-label={color}
+      aria-current={selected === color}
+      onclick={() => selected = color}
+    >{i + 1}</button>
+  {/each}
+</div>
+
+<style>
+  h1 {
+    transition: color 0.2s;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  div {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 5px;
+    max-width: 400px;
+  }
+
+  button {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color, #fff);
+    transform: translate(-2px,-2px);
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+    transition: all 0.1s;
+    color: black;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+
+  button[aria-current="true"] {
+    transform: none;
+    filter: none;
+    box-shadow: inset 3px 3px 4px rgba(0,0,0,0.2);
+  }
+</style>
+~~~
+
+![](img/17.png)
+
 ## Keyed each blocks
 
 By default, when you modify the value of an `each` block, it will add and remove DOM nodes at the _end_ of the block, and update any values that have changed. That might not be what you want.
@@ -836,6 +918,54 @@ To do that, we specify a unique _key_ for each iteration of the `each` block:
 
 > [!NOTE] You can use any object as the key, as Svelte uses a `Map` internally — in other words you could do `(thing)` instead of `(thing.id)`. Using a string or number is generally safer, however, since it means identity persists without referential equality, for example when updating with fresh data from an API server.
 
+#### Thing.svelte
+
+~~~html
+<script>
+  const emojis = {
+    apple: '🍎',
+    banana: '🍌',
+    carrot: '🥕',
+    doughnut: '🍩',
+    egg: '🥚'
+  };
+
+  // `name` is updated whenever the prop value changes...
+  let { name } = $props();
+
+  // ...but `emoji` is fixed upon initialisation
+  const emoji = emojis[name];
+</script>
+
+<p>{emoji} = {name}</p>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Thing from './Thing.svelte';
+
+  let things = $state([
+    { id: 1, name: 'apple' },
+    { id: 2, name: 'banana' },
+    { id: 3, name: 'carrot' },
+    { id: 4, name: 'doughnut' },
+    { id: 5, name: 'egg' }
+  ]);
+</script>
+
+<button onclick={() => things.shift()}>
+  Remove first thing
+</button>
+
+{#each things as thing (thing.id)}
+  <Thing name={thing.name} />
+{/each}
+~~~
+
+![](img/18.png)
+
 ## Await blocks
 
 Most web applications have to deal with asynchronous data at some point. Svelte makes it easy to _await_ the value of [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises) directly in your markup:
@@ -860,6 +990,51 @@ If you know that your promise can't reject, you can omit the `catch` block. You 
 {/await}
 ~~~
 
+
+#### utils.js
+
+~~~javascript
+export async function roll() {
+  // Fetch a random number from 1 to 6
+  // (with a delay, so that we can see it)
+  return new Promise((fulfil, reject) => {
+    setTimeout(() => {
+      // simulate a flaky network
+      if (Math.random() < 0.3) {
+        reject(new Error('Request failed'));
+        return;
+      }
+
+      fulfil(Math.ceil(Math.random() * 6));
+    }, 1000);
+  });
+}
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import { roll } from './utils.js';
+
+  let promise = $state(roll());
+</script>
+
+<button onclick={() => promise = roll()}>
+  roll the dice
+</button>
+
+{#await promise}
+  <p>...rolling</p>
+{:then number}
+  <p>you rolled a {number}!</p>
+{:catch error}
+  <p style="color: red">{error.message}</p>
+{/await}
+~~~
+
+![](img/19.png)
+
 # Events
 
 ## DOM events
@@ -880,19 +1055,45 @@ Like with any other property where the name matches the value, we can use the sh
 </div>
 ~~~
 
+#### App.svelte
+
+~~~html
+<script>
+  let m = $state({ x: 0, y: 0 });
+
+  function onpointermove(event) {
+    m.x = event.clientX;
+    m.y = event.clientY;
+  }
+</script>
+
+<div {onpointermove}>
+  The pointer is at {Math.round(m.x)} x {Math.round(m.y)}
+</div>
+
+<style>
+  div {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+  }
+</style>
+~~~
+
+![](img/20.png)
+
 ## Inline handlers
 
 You can also declare event handlers inline:
 
-~~~html
+#### App.svelte
 
+~~~html
 <script>
   let m = $state({ x: 0, y: 0 });
-
-  ---function onpointermove(event) {
-    m.x = event.clientX;
-    m.y = event.clientY;
-  }---
 </script>
 
 <div
@@ -901,9 +1102,22 @@ You can also declare event handlers inline:
     m.y = event.clientY;
   }}
 >
-  The pointer is at {m.x} x {m.y}
+  The pointer is at {Math.round(m.x)} x {Math.round(m.y)}
 </div>
+
+<style>
+  div {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+  }
+</style>
 ~~~
+
+
 
 ## Capturing
 
@@ -918,6 +1132,16 @@ Sometimes, you want handlers to run during the _capture_ phase instead. Add `cap
 ~~~
 
 Now, the relative order is reversed. If both capturing and non-capturing handlers exist for a given event, the capturing handlers will run first.
+
+### App.svelte
+
+~~~html
+<div onkeydowncapture={(e) => alert(`<div> ${e.key}`)} role="presentation">
+  <input onkeydowncapture={(e) => alert(`<input> ${e.key}`)} />
+</div>
+~~~
+
+![](img/21.png)
 
 ## Component events
 
@@ -945,6 +1169,36 @@ In `App.svelte`, define the handlers:
 />
 ~~~
 
+#### Stepper.svelte
+
+~~~html
+<script>
+  let { increment, decrement } = $props();
+</script>
+
+<button onclick={decrement}>-1</button>
+<button onclick={increment}>+1</button>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Stepper from './Stepper.svelte';
+
+  let value = $state(0);
+</script>
+
+<p>The current value is {value}</p>
+
+<Stepper
+  increment={() => value += 1}
+  decrement={() => value -= 1}
+/>
+~~~
+
+![](img/22.png)
+
 ## Spreading events
 
 We can also [spread](spread-props) event handlers directly onto elements. Here, we've defined an `onclick` handler in `App.svelte` — all we need to do is pass the props to the `<button>` in `BigRedButton.svelte`:
@@ -954,6 +1208,62 @@ We can also [spread](spread-props) event handlers directly onto elements. Here, 
   Push
 </button>
 ~~~
+
+#### BigRedButton.svelte
+
+~~~html
+<script>
+  let props = $props();
+</script>
+
+<button {...props}>
+  Push
+</button>
+
+<style>
+  button {
+    font-size: 1.4em;
+    width: 6em;
+    height: 6em;
+    border-radius: 50%;
+    background: radial-gradient(circle at 25% 25%, hsl(0, 100%, 50%) 0, hsl(0, 100%, 40%) 100%);
+    box-shadow: 0 8px 0 hsl(0, 100%, 30%), 2px 12px 10px rgba(0,0,0,.35);
+    color: hsl(0, 100%, 30%);
+    text-shadow: -1px -1px 2px rgba(0,0,0,0.3), 1px 1px 2px rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transform: translate(0, -8px);
+    transition: all 0.2s;
+  }
+
+  button:active {
+    transform: translate(0, -2px);
+    box-shadow: 0 2px 0 hsl(0, 100%, 30%), 2px 6px 10px rgba(0,0,0,.35);
+  }
+</style>
+~~~
+
+
+#### App.svelte
+
+~~~html
+<script>
+  import BigRedButton from './BigRedButton.svelte';
+  import horn from './horn.mp3';
+
+  const audio = new Audio();
+  audio.src = horn;
+
+  function honk() {
+    audio.load();
+    audio.play();
+  }
+</script>
+
+<BigRedButton onclick={honk} />
+~~~
+
+![](img/23.png)
 
 # Bindings
 
@@ -970,6 +1280,20 @@ Instead, we can use the `bind:value` directive:
 ~~~
 
 This means that not only will changes to the value of `name` update the input value, but changes to the input value will update `name`.
+
+#### App.svelte
+
+~~~html
+<script>
+  let name = $state('world');
+</script>
+
+<input bind:value={name} />
+
+<h1>Hello {name}!</h1>
+~~~
+
+![](img/24.png)
 
 ## Numeric inputs
 
@@ -989,6 +1313,30 @@ With `bind:value`, Svelte takes care of it for you:
 </label>
 ~~~
 
+
+#### App.svelte
+
+~~~html
+<script>
+  let a = $state(1);
+  let b = $state(2);
+</script>
+
+<label>
+  <input type="number" bind:value={a} min="0" max="10" />
+  <input type="range" bind:value={a} min="0" max="10" />
+</label>
+
+<label>
+  <input type="number" bind:value={b} min="0" max="10" />
+  <input type="range" bind:value={b} min="0" max="10" />
+</label>
+
+<p>{a} + {b} = {a + b}</p>
+~~~
+
+![](img/25.png)
+
 ## Checkbox inputs
 
 Checkboxes are used for toggling between states. Instead of binding to `input.value`, we bind to `input.checked`:
@@ -996,6 +1344,36 @@ Checkboxes are used for toggling between states. Instead of binding to `input.va
 ~~~html
 <input type="checkbox" bind:checked={yes}>
 ~~~
+
+
+#### App.svelte
+
+~~~html
+<script>
+  let yes = $state(false);
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={yes} />
+  Yes! Send me regular email spam
+</label>
+
+{#if yes}
+  <p>
+    Thank you. We will bombard your inbox and sell
+    your personal details.
+  </p>
+{:else}
+  <p>
+    You must opt in to continue. If you're not
+    paying, you're the product.
+  </p>
+{/if}
+
+<button disabled={!yes}>Subscribe</button>
+~~~
+
+![](img/26.png)
 
 ## Select bindings
 
@@ -1011,6 +1389,69 @@ We can also use `bind:value` with `<select>` elements:
 Note that the `<option>` values are objects rather than strings. Svelte doesn't mind.
 
 > [!NOTE] Because we haven't set an initial value of `selected`, the binding will set it to the default value (the first in the list) automatically. Be careful though — until the binding is initialised, `selected` remains undefined, so we can't blindly reference e.g. `selected.id` in the template.
+
+#### App.svelte
+
+~~~html
+<script>
+  let questions = $state([
+    {
+      id: 1,
+      text: `Where did you go to school?`
+    },
+    {
+      id: 2,
+      text: `What is your mother's name?`
+    },
+    {
+      id: 3,
+      text: `What is another personal fact that an attacker could easily find with Google?`
+    }
+  ]);
+
+  let selected = $state();
+
+  let answer = $state('');
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    alert(
+      `answered question ${selected.id} (${selected.text}) with "${answer}"`
+    );
+  }
+</script>
+
+<h2>Insecurity questions</h2>
+
+<form onsubmit={handleSubmit}>
+  <select
+    bind:value={selected}
+    onchange={() => (answer = '')}
+  >
+    {#each questions as question}
+      <option value={question}>
+        {question.text}
+      </option>
+    {/each}
+  </select>
+
+  <input bind:value={answer} />
+
+  <button disabled={!answer} type="submit">
+    Submit
+  </button>
+</form>
+
+<p>
+  selected question {selected
+    ? selected.id
+    : '[waiting...]'}
+</p>
+~~~
+
+![](img/27.png)
+![](img/28.png)
 
 ## Group inputs
 
@@ -1038,6 +1479,60 @@ Add `bind:group={scoops}` to the radio inputs...
 />
 ~~~
 
+#### App.svelte
+
+~~~html
+<script>
+  let scoops = $state(1);
+  let flavours = $state([]);
+
+  const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+</script>
+
+<h2>Size</h2>
+
+{#each [1, 2, 3] as number}
+  <label>
+    <input
+      type="radio"
+      name="scoops"
+      value={number}
+      bind:group={scoops}
+    />
+
+    {number} {number === 1 ? 'scoop' : 'scoops'}
+  </label>
+{/each}
+
+<h2>Flavours</h2>
+
+{#each ['cookies and cream', 'mint choc chip', 'raspberry ripple'] as flavour}
+  <label>
+    <input
+      type="checkbox"
+      name="flavours"
+      value={flavour}
+      bind:group={flavours}
+    />
+
+    {flavour}
+  </label>
+{/each}
+
+{#if flavours.length === 0}
+  <p>Please select at least one flavour</p>
+{:else if flavours.length > scoops}
+  <p>Can't order more flavours than scoops!</p>
+{:else}
+  <p>
+    You ordered {scoops} {scoops === 1 ? 'scoop' : 'scoops'}
+    of {formatter.format(flavours)}
+  </p>
+{/if}
+~~~
+
+![](img/29.png)
+
 ## Select multiple
 
 A `<select>` element can have a `multiple` attribute, in which case it will populate an array rather than selecting a single value.
@@ -1058,6 +1553,54 @@ Note that we're able to omit the `value` attribute on the `<option>`, since the 
 
 > [!NOTE] Press and hold the `control` key (or the `command` key on MacOS) to select multiple options.
 
+
+#### App.svelte
+
+~~~html
+<script>
+  let scoops = $state(1);
+  let flavours = $state([]);
+
+  const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+</script>
+
+<h2>Size</h2>
+
+{#each [1, 2, 3] as number}
+  <label>
+    <input
+      type="radio"
+      name="scoops"
+      value={number}
+      bind:group={scoops}
+    />
+
+    {number} {number === 1 ? 'scoop' : 'scoops'}
+  </label>
+{/each}
+
+<h2>Flavours</h2>
+
+<select multiple bind:value={flavours}>
+  {#each ['cookies and cream', 'mint choc chip', 'raspberry ripple'] as flavour}
+    <option>{flavour}</option>
+  {/each}
+</select>
+
+{#if flavours.length === 0}
+  <p>Please select at least one flavour</p>
+{:else if flavours.length > scoops}
+  <p>Can't order more flavours than scoops!</p>
+{:else}
+  <p>
+    You ordered {scoops} {scoops === 1 ? 'scoop' : 'scoops'}
+    of {formatter.format(flavours)}
+  </p>
+{/if}
+~~~
+
+![](img/30.png)
+
 ## Textarea inputs
 
 The `<textarea>` element behaves similarly to a text input in Svelte — use `bind:value`:
@@ -1074,6 +1617,40 @@ In cases like these, where the names match, we can also use a shorthand form:
 
 This applies to all bindings, not just `<textarea>` bindings.
 
+#### App.svelte
+
+~~~html
+<script>
+  import { marked } from 'marked';
+
+  let value = $state(`Some words are *italic*, some are **bold**\n\n- lists\n- are\n- cool`);
+</script>
+
+<div class="grid">
+  input
+  <textarea bind:value></textarea>
+
+  output
+  <div>{@html marked(value)}</div>
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: 5em 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 1em;
+    height: 100%;
+  }
+
+  textarea {
+    flex: 1;
+    resize: none;
+  }
+</style>
+~~~
+
+![](img/31.png)
 
 # Classes & Styles
 
@@ -1101,6 +1678,107 @@ We can make it nicer though. Adding or removing a class based on some condition 
 
 This means 'always add the `card` class, and add the `flipped` class whenever `flipped` is truthy'.
 
+#### App.svelte
+
+~~~html
+<script>
+  let flipped = $state(false);
+</script>
+
+<div class="container">
+  Flip the card
+  <button
+    class={["card", { flipped }]}
+    onclick={() => flipped = !flipped}
+  >
+    <div class="front">
+      <span class="symbol">♠</span>
+    </div>
+    <div class="back">
+      <div class="pattern"></div>
+    </div>
+  </button>
+</div>
+
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    perspective: 100vh;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 2.5 / 3.5;
+    font-size: min(1vh, 0.25rem);
+    height: 80em;
+    background: var(--bg-1);
+    border-radius: 2em;
+    transform: rotateY(180deg);
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
+    padding: 0;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .card.flipped {
+    transform: rotateY(0);
+  }
+
+  .front, .back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    backface-visibility: hidden;
+    border-radius: 2em;
+    border: 1px solid var(--fg-2);
+    box-sizing: border-box;
+    padding: 2em;
+  }
+
+  .front {
+    background: url(./svelte-logo.svg) no-repeat 5em 5em, url(./svelte-logo.svg) no-repeat calc(100% - 5em) calc(100% - 5em);
+    background-size: 8em 8em, 8em 8em;
+  }
+
+  .back {
+    transform: rotateY(180deg);
+  }
+
+  .symbol {
+    font-size: 30em;
+    color: var(--fg-1);
+  }
+
+  .pattern {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-2);
+    /* pattern from https://projects.verou.me/css3patterns/#marrakesh */
+    background-image:
+    radial-gradient(var(--bg-3) 0.9em, transparent 1em),
+    repeating-radial-gradient(var(--bg-3) 0, var(--bg-3) 0.4em, transparent 0.5em, transparent 2em, var(--bg-3) 2.1em, var(--bg-3) 2.5em, transparent 2.6em, transparent 5em);
+    background-size: 3em 3em, 9em 9em;
+    background-position: 0 0;
+    border-radius: 1em;
+  }
+</style>
+~~~
+
+![](img/32.png)
+
+![](img/33.png)
+
 ## The style directive
 
 As with `class`, you can write your inline `style` attributes literally, because Svelte is really just HTML with fancy bits:
@@ -1125,6 +1803,107 @@ When you have a lot of styles, it can start to look a bit wacky. We can tidy thi
   onclick={() => flipped = !flipped}
 >
 ~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  let flipped = $state(false);
+</script>
+
+<div class="container">
+  Flip the card
+  <button
+    class="card"
+    style:transform={flipped ? 'rotateY(0)' : ''}
+    style:--bg-1="palegoldenrod"
+    style:--bg-2="black"
+    style:--bg-3="goldenrod"
+    onclick={() => flipped = !flipped}
+  >
+    <div class="front">
+      <span class="symbol">♠</span>
+    </div>
+    <div class="back">
+      <div class="pattern"></div>
+    </div>
+  </button>
+</div>
+
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    perspective: 100vh;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 2.5 / 3.5;
+    font-size: min(1vh, 0.25rem);
+    height: 80em;
+    background: var(--bg-1);
+    border-radius: 2em;
+    transform: rotateY(180deg);
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
+    padding: 0;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .front, .back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    backface-visibility: hidden;
+    border-radius: 2em;
+    border: 1px solid var(--fg-2);
+    box-sizing: border-box;
+    padding: 2em;
+  }
+
+  .front {
+    background: url(./svelte-logo.svg) no-repeat 5em 5em, url(./svelte-logo.svg) no-repeat calc(100% - 5em) calc(100% - 5em);
+    background-size: 8em 8em, 8em 8em;
+  }
+
+  .back {
+    transform: rotateY(180deg);
+  }
+
+  .symbol {
+    font-size: 30em;
+    color: var(--fg-1);
+  }
+
+  .pattern {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-2);
+    /* pattern from https://projects.verou.me/css3patterns/#marrakesh */
+    background-image:
+    radial-gradient(var(--bg-3) 0.9em, transparent 1em),
+    repeating-radial-gradient(var(--bg-3) 0, var(--bg-3) 0.4em, transparent 0.5em, transparent 2em, var(--bg-3) 2.1em, var(--bg-3) 2.5em, transparent 2.6em, transparent 5em);
+    background-size: 3em 3em, 9em 9em;
+    background-position: 0 0;
+    border-radius: 1em;
+  }
+</style>
+~~~
+
+![](img/34.png)
+
+![](img/35.png)
 
 ## Component styles
 
@@ -1188,6 +1967,37 @@ The values can be dynamic, like any other attribute.
 >
 > Because of `display: contents` this won't affect your layout, but the extra element _can_ affect selectors like `.parent > .child`.
 
+### Box.svelte
+
+~~~html
+<div class="box"></div>
+
+<style>
+  .box {
+    width: 5em;
+    height: 5em;
+    border-radius: 0.5em;
+    margin: 0 0 1em 0;
+    background-color: var(--color, #ddd);
+  }
+</style>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Box from './Box.svelte';
+</script>
+
+<div class="boxes">
+  <Box --color="red" />
+  <Box --color="green" />
+  <Box --color="blue" />
+</div>
+~~~
+
+![](img/36.png)
 
 # Actions
 
@@ -1250,6 +2060,281 @@ $effect(() => {
 
 Now, when you open the menu, you can cycle through the options with the Tab key.
 
+
+### actions.svelte.js
+
+~~~javascript
+export function trapFocus(node) {
+  const previous = document.activeElement;
+
+  function focusable() {
+    return Array.from(node.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'));
+  }
+
+  function handleKeydown(event) {
+    if (event.key !== 'Tab') return;
+
+    const current = document.activeElement;
+
+    const elements = focusable();
+    const first = elements.at(0);
+    const last = elements.at(-1)
+
+    if (event.shiftKey && current === first) {
+      last.focus();
+      event.preventDefault();
+    }
+
+    if (!event.shiftKey && current === last) {
+      first.focus();
+      event.preventDefault();
+    }
+  }
+
+  $effect(() => {
+    focusable()[0]?.focus();
+    node.addEventListener('keydown', handleKeydown);
+
+    return () => {
+      node.removeEventListener('keydown', handleKeydown);
+      previous?.focus();
+    };
+  });
+}
+~~~
+
+#### Canvas.svelte
+
+~~~html
+<script>
+  let { color, size } = $props();
+
+  let canvas = $state();
+  let context = $state();
+  let coords = $state();
+
+  $effect(() => {
+    context = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+    };
+  });
+</script>
+
+<canvas
+  bind:this={canvas}
+  onpointerdown={(e) => {
+    coords = { x: e.offsetX, y: e.offsetY };
+
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(coords.x, coords.y, size / 2, 0, 2 * Math.PI);
+    context.fill();
+  }}
+  onpointerleave={() => {
+    coords = null;
+  }}
+  onpointermove={(e) => {
+    const previous = coords;
+
+    coords = { x: e.offsetX, y: e.offsetY };
+
+    if (e.buttons === 1) {
+      e.preventDefault();
+
+      context.strokeStyle = color;
+      context.lineWidth = size;
+      context.lineCap = 'round';
+      context.beginPath();
+      context.moveTo(previous.x, previous.y);
+      context.lineTo(coords.x, coords.y);
+      context.stroke();
+    }
+  }}
+></canvas>
+
+{#if coords}
+  <div
+    class="preview"
+    style="--color: {color}; --size: {size}px; --x: {coords.x}px; --y: {coords.y}px"
+  ></div>
+{/if}
+
+<style>
+  canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .preview {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--size);
+    height: var(--size);
+    transform: translate(-50%, -50%);
+    background: var(--color);
+    border-radius: 50%;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+</style>
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import Canvas from './Canvas.svelte';
+  import { trapFocus } from './actions.svelte.js';
+
+  const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet', 'white', 'black'];
+
+  let selected = $state(colors[0]);
+  let size = $state(10);
+  let showMenu = $state(true);
+</script>
+
+<div class="container">
+  <Canvas color={selected} size={size} />
+
+  {#if showMenu}
+    <div
+      role="presentation"
+      class="modal-background"
+      onclick={(event) => {
+        if (event.target === event.currentTarget) {
+          showMenu = false;
+        }
+      }}
+      onkeydown={(e) => {
+        if (e.key === 'Escape') {
+          showMenu = false;
+        }
+      }}
+    >
+      <div class="menu" use:trapFocus>
+        <div class="colors">
+          {#each colors as color}
+            <button
+              class="color"
+              aria-label={color}
+              aria-current={selected === color}
+              style="--color: {color}"
+              onclick={() => {
+                selected = color;
+              }}
+            ></button>
+          {/each}
+        </div>
+
+        <label>
+          small
+          <input type="range" bind:value={size} min="1" max="50" />
+          large
+        </label>
+      </div>
+    </div>
+  {/if}
+
+  <div class="controls">
+    <button class="show-menu" onclick={() => showMenu = !showMenu}>
+      {showMenu ? 'close' : 'menu'}
+    </button>
+  </div>
+</div>
+
+<style>
+  .container {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .controls {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 1em;
+  }
+
+  .show-menu {
+    width: 5em;
+  }
+
+  .modal-background {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(20px);
+  }
+
+  .menu {
+    position: relative;
+    background: var(--bg-2);
+    width: calc(100% - 2em);
+    max-width: 28em;
+    padding: 1em 1em 0.5em 1em;
+    border-radius: 1em;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .colors {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(9, 1fr);
+    grid-gap: 0.5em;
+  }
+
+  .color {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--color, #fff);
+    transform: none;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.2));
+    transition: all 0.1s;
+  }
+
+  .color[aria-current="true"] {
+    transform: translate(1px, 1px);
+    filter: none;
+    box-shadow: inset 3px 3px 4px rgba(0,0,0,0.2);
+  }
+
+  .menu label {
+    display: flex;
+    width: 100%;
+    margin: 1em 0 0 0;
+  }
+
+  .menu input {
+    flex: 1;
+  }
+</style>
+~~~
+
+![](img/37.png)
+
 ## Adding parameters
 
 Like transitions and animations, an action can take an argument, which the action function will be called with alongside the element it belongs to.
@@ -1280,6 +2365,59 @@ Then, we need to pass the options into the action:
 
 > [!NOTE] In Svelte 4, actions returned an object with `update` and `destroy` methods. This still works but we recommend using `$effect` instead, as it provides more flexibility and granularity.
 
+#### App.svelte
+
+~~~html
+<script>
+  import tippy from 'tippy.js';
+
+  let content = $state('Hello!');
+
+  function tooltip(node, fn) {
+    $effect(() => {
+      const tooltip = tippy(node, fn());
+
+      return tooltip.destroy;
+    });
+  }
+</script>
+
+<input bind:value={content} />
+
+<button use:tooltip={() => ({ content })}>
+  Hover me
+</button>
+
+<style>
+  :global {
+    [data-tippy-root] {
+      --bg: #666;
+      background-color: var(--bg);
+      color: white;
+      border-radius: 0.2rem;
+      padding: 0.2rem 0.6rem;
+      filter: drop-shadow(1px 1px 3px rgb(0 0 0 / 0.1));
+
+      * {
+        transition: none;
+      }
+    }
+
+    [data-tippy-root]::before {
+      --size: 0.4rem;
+      content: '';
+      position: absolute;
+      left: calc(50% - var(--size));
+      top: calc(-2 * var(--size) + 1px);
+      border: var(--size) solid transparent;
+      border-bottom-color: var(--bg);
+    }
+  }
+</style>
+~~~
+
+![](img/38.png)
+
 # Transitions
 
 ## The transition directive
@@ -1305,6 +2443,30 @@ First, import the `fade` function from `svelte/transition`...
 </p>
 ~~~
 
+
+#### App.svelte
+
+~~~html
+<script>
+  import { fade } from 'svelte/transition';
+
+  let visible = $state(true);
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible} />
+  visible
+</label>
+
+{#if visible}
+  <p transition:fade>
+    Fades in and out
+  </p>
+{/if}
+~~~
+
+![](img/39.png)
+
 ## Adding parameters
 
 Transition functions can accept parameters. Replace the `fade` transition with `fly`...
@@ -1327,6 +2489,29 @@ Transition functions can accept parameters. Replace the `fade` transition with `
 
 Note that the transition is _reversible_ — if you toggle the checkbox while the transition is ongoing, it transitions from the current point, rather than the beginning or the end.
 
+#### App.svelte
+
+~~~html
+<script>
+  import { fly } from 'svelte/transition';
+
+  let visible = $state(true);
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible} />
+  visible
+</label>
+
+{#if visible}
+  <p transition:fly={{ y: 200, duration: 2000 }}>
+    Flies in and out
+  </p>
+{/if}
+~~~
+
+![](img/40.png)
+
 ## In and out
 
 Instead of the `transition` directive, an element can have an `in` or an `out` directive, or both together. Import `fade` alongside `fly`...
@@ -1344,6 +2529,29 @@ import { fade, fly } from 'svelte/transition';
 ~~~
 
 In this case, the transitions are _not_ reversed.
+
+#### App.svelte
+
+~~~html
+<script>
+  import { fade, fly } from 'svelte/transition';
+
+  let visible = $state(true);
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible} />
+  visible
+</label>
+
+{#if visible}
+  <p in:fly={{ y: 200, duration: 2000 }} out:fade>
+    Flies in, fades out
+  </p>
+{/if}
+~~~
+
+[](img/40.png)
 
 ## Custom CSS transitions
 
@@ -1415,6 +2623,66 @@ We can get a lot more creative though. Let's make something truly gratuitous:
 
 Remember: with great power comes great responsibility.
 
+#### App.svelte
+
+~~~html
+<script>
+  import { fade } from 'svelte/transition';
+  import { elasticOut } from 'svelte/easing';
+
+  let visible = $state(true);
+
+  function spin(node, { duration }) {
+    return {
+      duration,
+      css: (t, u) => {
+        const eased = elasticOut(t);
+
+        return `
+          transform: scale(${eased}) rotate(${eased * 1080}deg);
+          color: hsl(
+            ${Math.trunc(t * 360)},
+            ${Math.min(100, 1000 * u)}%,
+            ${Math.min(50, 500 * u)}%
+          );`;
+      }
+    };
+  }
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible} />
+  visible
+</label>
+
+{#if visible}
+  <div
+    class="centered"
+    in:spin={{ duration: 8000 }}
+    out:fade
+  >
+    <span>transitions!</span>
+  </div>
+{/if}
+
+<style>
+  .centered {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  span {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+  }
+</style>
+~~~
+
+![](img/42.png)
+
 ## Custom JS transitions
 
 While you should generally use CSS for transitions as much as possible, there are some effects that can't be achieved without JavaScript, such as a typewriter effect:
@@ -1440,6 +2708,47 @@ function typewriter(node, { speed = 1 }) {
 }
 ~~~
 
+
+#### App.svelte
+
+~~~html
+<script>
+  let visible = $state(false);
+
+  function typewriter(node, { speed = 1 }) {
+    const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
+
+    if (!valid) {
+      throw new Error(`This transition only works on elements with a single text node child`);
+    }
+
+    const text = node.textContent;
+    const duration = text.length / (speed * 0.01);
+
+    return {
+      duration,
+      tick: (t) => {
+        const i = Math.trunc(text.length * t);
+        node.textContent = text.slice(0, i);
+      }
+    };
+  }
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible} />
+  visible
+</label>
+
+{#if visible}
+  <p transition:typewriter>
+    The quick brown fox jumps over the lazy dog
+  </p>
+{/if}
+~~~
+
+![](img/43.png)
+
 ## Transition events
 
 It can be useful to know when transitions are beginning and ending. Svelte dispatches events that you can listen to like any other DOM event:
@@ -1456,6 +2765,38 @@ It can be useful to know when transitions are beginning and ending. Svelte dispa
 </p>
 ~~~
 
+#### App.svelte
+
+~~~html
+<script>
+  import { fly } from 'svelte/transition';
+
+  let visible = $state(true);
+  let status = $state('waiting...');
+</script>
+
+<p>status: {status}</p>
+
+<label>
+  <input type="checkbox" bind:checked={visible} />
+  visible
+</label>
+
+{#if visible}
+  <p
+    transition:fly={{ y: 200, duration: 2000 }}
+    onintrostart={() => status = 'intro started'}
+    onoutrostart={() => status = 'outro started'}
+    onintroend={() => status = 'intro ended'}
+    onoutroend={() => status = 'outro ended'}
+  >
+    Flies in and out
+  </p>
+{/if}
+~~~
+
+![](img/44.png)
+
 ## Global transitions
 
 Ordinarily, transitions will only play on elements when their direct containing block is added or destroyed. In the example here, toggling the visibility of the entire list does not apply transitions to individual list elements.
@@ -1469,6 +2810,45 @@ We can achieve this with a _global_ transition, which plays when _any_ block con
   {item}
 </div>
 ~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import { slide } from 'svelte/transition';
+
+  let items = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+
+  let showItems = $state(true);
+  let i = $state(5);
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={showItems} />
+  show list
+</label>
+
+<label>
+  <input type="range" bind:value={i} max="10" />
+</label>
+
+{#if showItems}
+  {#each items.slice(0, i) as item}
+    <div transition:slide|global>
+      {item}
+    </div>
+  {/each}
+{/if}
+
+<style>
+  div {
+    padding: 0.5em 0;
+    border-top: 1px solid #eee;
+  }
+</style>
+~~~
+
+![](img/45.png)
 
 > [!NOTE] In Svelte 3, transitions were global by default and you had to use the `|local` modifier to make them local.
 
@@ -1486,3 +2866,77 @@ Here, for example, we'd like to play the `typewriter` transition from `transitio
 {/key}
 ~~~
 
+
+#### loading-messages.js
+
+~~~javascript
+// thanks to https://gist.github.com/meain/6440b706a97d2dd71574769517e7ed32
+export const messages = [
+  "reticulating splines...",
+  "generating witty dialog...",
+  "swapping time and space...",
+  "640K ought to be enough for anybody",
+  "checking the gravitational constant in your locale...",
+  "keep calm and npm install",
+  "counting backwards from Infinity",
+  "I'm sorry Dave, I can't do that.",
+  "adjusting flux capacitor...",
+  "constructing additional pylons...",
+  "rm -rf /",
+];
+~~~
+
+#### transition.js
+
+~~~javascript
+export function typewriter(node, { speed = 1 }) {
+  const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
+
+  if (!valid) {
+    throw new Error(`This transition only works on elements with a single text node child`);
+  }
+
+  const text = node.textContent;
+  const duration = text.length / (speed * 0.01);
+
+  return {
+    duration,
+    tick: (t) => {
+      const i = Math.trunc(text.length * t);
+      node.textContent = text.slice(0, i);
+    }
+  };
+}
+~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  import { typewriter } from './transition.js';
+  import { messages } from './loading-messages.js';
+
+  let i = $state(-1);
+
+  $effect(() => {
+    const interval = setInterval(() => {
+      i += 1;
+      i %= messages.length;
+    }, 2500);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
+</script>
+
+<h1>loading...</h1>
+
+{#key i}
+  <p in:typewriter={{ speed: 10 }}>
+    {messages[i] || ''}
+  </p>
+{/key}
+~~~
+
+![](img/46.png)
