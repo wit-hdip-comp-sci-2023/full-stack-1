@@ -23,8 +23,10 @@ A component that just renders some static markup isn't very interesting. Let's a
 
 First, add a script tag to your component and declare a `name` variable:
 
+#### App.svelte
+
 ~~~html
-script>
+<script>
   let name = 'Svelte';
 </script>
 
@@ -42,6 +44,19 @@ Inside the curly braces, we can put any JavaScript we want. Try changing `name` 
 ~~~html
 <h1>Hello {name.toUpperCase()}!</h1>
 ~~~
+
+#### App.svelte
+
+~~~html
+<script>
+	let name = 'Svelte';
+</script>
+
+<h1>Hello {name.toUpperCase()}!</h1>
+~~~
+
+
+<h1>Hello world!</h1>
 
 ## Dynamic attributes
 
