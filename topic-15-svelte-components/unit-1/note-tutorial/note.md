@@ -134,6 +134,8 @@ Importantly, these rules are _scoped to the component_. You won't accidentally c
 </style>
 ~~~
 
+![](img/00.png)
+
 ## Nested components
 
 It would be impractical to put your entire app in a single component. Instead, we can import components from other files and include them in our markup.
@@ -199,10 +201,22 @@ In Svelte, you do this with the special `{@html ...}` tag:
 
 > [!NOTE] Important: Svelte doesn't perform any sanitization of the expression inside `{@html ...}` before it gets inserted into the DOM. This isn't an issue if the content is something you trust like an article you wrote yourself. However if it's some untrusted user content, e.g. a comment on an article, then it's critical that you manually escape it, otherwise you risk exposing your users to <a href="https://owasp.org/www-community/attacks/xss/" target="_blank">Cross-Site Scripting</a> (XSS) attacks.
 
+
+#### App.svelte
+
+~~~html
+<script>
+  let string = `this string contains some <strong>HTML!!!</strong>`;
+</script>
+
+<p>{@html string}</p>
+~~~
+
+![](img/02.png)
+
 # Reactivity
 
 ## State
-
 
 At the heart of Svelte is a powerful system of _reactivity_ for keeping the DOM in sync with your application state — for example, in response to an event.
 
@@ -221,6 +235,25 @@ function increment() {
   count += 1;
 }
 ~~~
+
+#### App.svelte
+
+~~~html
+<script>
+  let count = $state(0);
+
+  function increment() {
+    count += 1;
+  }
+</script>
+
+<button onclick={increment}>
+  Clicked {count}
+  {count === 1 ? 'time' : 'times'}
+</button>
+~~~
+
+![](img/03.png)
 
 ## Deep state
 
@@ -249,6 +282,26 @@ function addNumber() {
 ~~~
 
 > [!NOTE] Deep reactivity is implemented using [proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), and mutations to the proxy do not affect the original object.
+
+
+#### App.svelte
+~~~html
+<script>
+  let numbers = $state([1, 2, 3, 4]);
+
+  function addNumber() {
+    numbers.push(numbers.length + 1);
+  }
+</script>
+
+<p>{numbers.join(' + ')} = ...</p>
+
+<button onclick={addNumber}>
+  Add a number
+</button>
+~~~
+
+![](img/04.png)
 
 ## Derived state
 
@@ -298,6 +351,26 @@ You can customise how the information is displayed by using `$inspect(...).with(
 ~~~js
 $inspect(numbers).with(console.trace);
 ~~~
+
+#### App.svelte
+~~~html
+<script>
+  let numbers = $state([1, 2, 3, 4]);
+  let total = $derived(numbers.reduce((t, n) => t + n, 0));
+
+  function addNumber() {
+    numbers.push(numbers.length + 1);
+  }
+</script>
+
+<p>{numbers.join(' + ')} = {total}</p>
+
+<button onclick={addNumber}>
+  Add a number
+</button>
+~~~
+
+![](img/05.png)
 
 ## Effects
 
