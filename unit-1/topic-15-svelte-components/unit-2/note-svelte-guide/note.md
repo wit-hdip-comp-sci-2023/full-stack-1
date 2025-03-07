@@ -5,7 +5,7 @@ icon:
 
 # Svelte 
 
-Svelte Tutorial
+The Svelte Tutorial as a single note
 
 [[toc]]
 
