@@ -12,23 +12,23 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^8.57.1",
+    "eslint": "8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-import": "^2.31.0",
     "nodemon": "^3.1.9",
-    "prettier": "^3.5.2"
+    "prettier": "^3.5.3"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@hapi/cookie": "^12.0.1",
-    "@hapi/hapi": "^21.3.12",
+    "@hapi/hapi": "^21.4.0",
     "@hapi/inert": "^7.1.0",
     "@hapi/vision": "^7.0.3",
     "dotenv": "^16.4.7",
     "handlebars": "^4.7.8",
     "mais-mongoose-seeder": "^1.0.7",
-    "mongoose": "^8.10.1"
+    "mongoose": "^8.12.1"
   },
   "engines": {
     "node": ">=16"
