@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let title = "";
+  let {title = "", children} = $props();
 </script>
 
 <div class="card mb-5">
@@ -10,7 +10,7 @@
   </header>
   <div class="card-content">
     <div class="content">
-      <slot />
+      {@render children()}
     </div>
   </div>
 </div>
