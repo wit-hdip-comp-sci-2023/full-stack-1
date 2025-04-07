@@ -2,7 +2,6 @@ import axios from "axios";
 import type { Session, User } from "$lib/types/donation-types";
 import type { Candidate, Donation } from "$lib/types/donation-types";
 import { currentDonations, currentCandidates, loggedInUser } from "$lib/runes.svelte";
-import { computeByCandidate, computeByMethod } from "./donation-utils";
 
 export const donationService = {
   baseUrl: "http://localhost:4000",
@@ -75,8 +74,6 @@ export const donationService = {
     if (loggedInUser.token) {
       currentDonations.donations = await this.getDonations(loggedInUser.token);
       currentCandidates.candidates = await this.getCandidates(loggedInUser.token);
-      computeByMethod(currentDonations.donations);
-      computeByCandidate(currentDonations.donations, currentCandidates.candidates)
     }
   },
 

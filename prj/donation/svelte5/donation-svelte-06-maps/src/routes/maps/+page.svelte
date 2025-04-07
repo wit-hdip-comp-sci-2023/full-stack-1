@@ -1,25 +1,3 @@
-# Donations Markers
-
-The next step will be to place markers at the location of each donation.
-
-Introduce this new function into LeafletMap:
-
-### src/lib/ui/LeafletMap.svelte
-
-~~~typescript
-  import L from "leaflet";
-  //...
-
-  export function addMarker(lat: number, lng: number) {
-    L.marker([lat, lng]).addTo(imap);
-  }
-~~~
-
-We trigger this function the Maps route - this is a revised version::
-
-### src/routes/maps/+page.svelte
-
-~~~html
 <script lang="ts">
   import { loggedInUser, subTitle } from "$lib/runes.svelte";
   import { donationService } from "$lib/services/donation-service";
@@ -34,16 +12,16 @@ We trigger this function the Maps route - this is a revised version::
   onMount(async () => {
     const donations = await donationService.getDonations(loggedInUser.token);
     donations.forEach((donation: Donation) => {
-      map.addMarker(donation.lat, donation.lng);
+      if (typeof donation.candidate !== "string") {
+        const popup = `${donation.candidate.firstName} ${donation.candidate.lastName}: €${donation.amount}`;
+        map.addMarker(donation.lat, donation.lng, popup);
+      }
     });
+    const lastDonation = donations[donations.length - 1];
+    if (lastDonation) map.moveTo(lastDonation.lat, lastDonation.lng);
   });
 </script>
 
 <Card title="Donations Locations">
   <LeafletMap height={60} bind:this={map} />
 </Card>
-~~~
-
-The markers for our sample data should appear (you may need to pan and zoom to see the view below):
-
-![](img/25.png)

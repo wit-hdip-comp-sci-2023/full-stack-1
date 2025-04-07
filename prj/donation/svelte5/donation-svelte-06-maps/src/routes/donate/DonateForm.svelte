@@ -62,13 +62,13 @@
       </select>
     </div>
   </div>
-</div>
-<Coordinates bind:lat bind:lng />
-<div class="field">
-  <div class="control">
-    <button onclick={() => donate()} class="button is-success is-fullwidth">Donate</button>
+  <div class="field">
+    <div class="control">
+      <button onclick={() => donate()} class="button">Donate</button>
+    </div>
   </div>
 </div>
+<Coordinates bind:lat bind:lng />
 <div class="box mt-4">
   <div class="content has-text-centered">
     {message}

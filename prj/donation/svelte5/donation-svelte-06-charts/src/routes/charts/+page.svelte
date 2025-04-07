@@ -1,25 +1,19 @@
 <script lang="ts">
-  import { subTitle } from "$lib/runes.svelte";
+  import { curentDataSets } from "$lib/runes.svelte";
   // @ts-ignore
   import Chart from "svelte-frappe-charts";
-
-  subTitle.text = "Charts";
-  const chartData = {
-    labels: ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"],
-    datasets: [
-      {
-        values: [10, 12, 3, 9, 8, 15, 9]
-      }
-    ]
-  };
+  import Card from "$lib/ui/Card.svelte";
 </script>
 
 <div class="columns">
-  <div class="column box has-text-centered">
-    <h1 class="title is-4">Donations to date</h1>
-    <Chart data={chartData} type="line" />
+  <div class="column">
+    <Card title="Donations By Method">
+      <Chart data={curentDataSets.donationsByMethod} type="bar" />
+    </Card>
   </div>
   <div class="column has-text-centered">
-    <img alt="Homer" src="/homer4.jpeg" width="300" />
+    <Card title="Donations By Method">
+      <Chart data={curentDataSets.donationsByCandidate} type="pie" />
+    </Card>
   </div>
 </div>
