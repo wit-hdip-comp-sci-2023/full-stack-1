@@ -1,5 +1,7 @@
 <script lang="ts">
   import { loggedInUser } from "$lib/runes.svelte";
+  console.log(loggedInUser.email);
+  console.log(loggedInUser._id);
 </script>
 
 <nav class="navbar is-full-width">
