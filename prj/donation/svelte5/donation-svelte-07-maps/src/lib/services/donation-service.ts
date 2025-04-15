@@ -5,7 +5,8 @@ import { currentDonations, currentCandidates, loggedInUser } from "$lib/runes.sv
 import { computeByCandidate, computeByMethod } from "./donation-utils";
 
 export const donationService = {
-  baseUrl: "http://localhost:4000",
+  // baseUrl: "http://localhost:4000",
+  baseUrl: "https://donation-web-api-ts.glitch.me",
 
   async signup(user: User): Promise<boolean> {
     try {

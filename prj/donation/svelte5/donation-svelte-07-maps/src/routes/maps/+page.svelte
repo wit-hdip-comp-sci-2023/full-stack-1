@@ -14,5 +14,5 @@
 </script>
 
 <Card title="Donations Locations">
-  <LeafletMap height={60} bind:this={map}/>
+  <LeafletMap height={60} bind:this={map} />
 </Card>
