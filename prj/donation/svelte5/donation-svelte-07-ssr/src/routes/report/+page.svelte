@@ -1,11 +1,12 @@
 <script lang="ts">
   import Card from "$lib/ui/Card.svelte";
   import DonationList from "$lib/ui/DonationList.svelte";
-  import { currentDonations, subTitle } from "$lib/runes.svelte";
+  import { subTitle } from "$lib/runes.svelte";
+  import { refreshDonationState } from "$lib/services/donation-utils";
 
   subTitle.text = "Donation to Date";
-  export let data: any;
-  currentDonations.donations = data.donations;
+  let data = $props();
+  refreshDonationState(data.donations);
 </script>
 
 <Card title="Donations">

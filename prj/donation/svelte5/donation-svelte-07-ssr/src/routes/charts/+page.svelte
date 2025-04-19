@@ -1,15 +1,13 @@
 <script lang="ts">
-  import { curentDataSets, currentCandidates, currentDonations } from "$lib/runes.svelte";
+  import { curentDataSets } from "$lib/runes.svelte";
   // @ts-ignore
   import Chart from "svelte-frappe-charts";
   import Card from "$lib/ui/Card.svelte";
-  import { computeByCandidate, computeByMethod } from "$lib/services/donation-utils";
 
-  export let data: any;
-  currentDonations.donations = data.donations;
-  currentCandidates.candidates = data.candidates;
-  computeByMethod(currentDonations.donations);
-  computeByCandidate(currentDonations.donations, currentCandidates.candidates);
+  import { refreshDonationState } from "$lib/services/donation-utils";
+
+  let data = $props();
+  refreshDonationState(data.donations, data.candidates);
 </script>
 
 <div class="columns">

@@ -1,8 +1,6 @@
 import axios from "axios";
 import type { Session, User } from "$lib/types/donation-types";
 import type { Candidate, Donation } from "$lib/types/donation-types";
-import { currentDonations, currentCandidates, loggedInUser } from "$lib/runes.svelte";
-import { computeByCandidate, computeByMethod } from "./donation-utils";
 
 export const donationService = {
   baseUrl: "http://localhost:4000",
@@ -38,22 +36,6 @@ export const donationService = {
       console.log(error);
       return null;
     }
-  },
-
-  clearSession() {
-    currentDonations.donations = [];
-    currentCandidates.candidates = [];
-    loggedInUser.email = "";
-    loggedInUser.name = "";
-    loggedInUser.token = "";
-    loggedInUser._id = "";
-  },
-
-  async refreshDonationState(donations?: Donation[], candidates?: Candidate[]) {
-    if (!donations) currentDonations.donations = await this.getDonations(loggedInUser.token);
-    if (!candidates) currentCandidates.candidates = await this.getCandidates(loggedInUser.token);
-    computeByMethod(currentDonations.donations);
-    computeByCandidate(currentDonations.donations, currentCandidates.candidates);
   },
 
   async donate(donation: Donation, token: string) {
