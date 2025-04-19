@@ -1,27 +1,3 @@
-## Charts
-
-The charts view is relatively easy to convert. First, the server component:
-
-~~~typescript
-import { donationService } from "$lib/services/donation-service";
-import type { Session } from "$lib/types/donation-types";
-import type { PageServerLoad } from "./$types";
-
-export const load: PageServerLoad = async ({ cookies }) => {
-  const cookieStr = cookies.get("donation-user") as string;
-  if (cookieStr) {
-    const session = JSON.parse(cookieStr) as Session;
-    return {
-      donations: await donationService.getDonations(session.token),
-      candidates: await donationService.getCandidates(session.token)
-    };
-  }
-};
-~~~
-
-The view can then be simplified:
-
-~~~html
 <script lang="ts">
   import { curentDataSets, currentCandidates, currentDonations } from "$lib/runes.svelte";
   // @ts-ignore
@@ -48,8 +24,3 @@ The view can then be simplified:
     </Card>
   </div>
 </div>
-~~~
-
-This should now work as before.
-
-![](img/03.png)
