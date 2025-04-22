@@ -13,7 +13,7 @@
   </div>
   <div class="column has-text-centered">
     <Card title="Donations By Method">
-      <Chart data={curentDataSets.donationsByCandidate} type="pie" />
+      <Chart data={curentDataSets.donationsByMethod} type="pie" />
     </Card>
   </div>
 </div>

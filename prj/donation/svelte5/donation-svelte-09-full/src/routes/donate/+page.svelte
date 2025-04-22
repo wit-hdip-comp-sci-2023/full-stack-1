@@ -18,7 +18,6 @@
 
   const handleDonationSuccess = () => {
     return async ({ result }: { result: ActionResult }) => {
-      console.log(result);
       if (result.type === "success") {
         const donation = result.data as Donation;
         currentDonations.donations.push(donation);

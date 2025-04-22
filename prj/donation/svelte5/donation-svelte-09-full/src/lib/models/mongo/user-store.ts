@@ -22,10 +22,7 @@ export const userStore = {
   },
 
   async findBy(email: string): Promise<User | null> {
-    console.log("here2");
     const user = await UserMongoose.findOne({ email: email }).lean();
-    console.log("here3");
-    console.log(user);
     return user;
   },
 
