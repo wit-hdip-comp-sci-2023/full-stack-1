@@ -3,10 +3,10 @@
   import DonationList from "$lib/ui/DonationList.svelte";
   import { subTitle } from "$lib/runes.svelte";
   import { refreshDonationState } from "$lib/services/donation-utils";
-  import type { PageData } from "./$types";
+  import type { PageProps } from "./$types";
 
   subTitle.text = "Donation to Date";
-  let { data } = $props<{ data: PageData }>();
+  let { data }: PageProps = $props();
   refreshDonationState(data.donations, data.candidates);
 </script>
 

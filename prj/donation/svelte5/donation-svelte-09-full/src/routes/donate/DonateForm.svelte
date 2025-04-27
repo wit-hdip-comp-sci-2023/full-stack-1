@@ -1,22 +1,15 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { Candidate } from "$lib/types/donation-types";
   import Coordinates from "$lib/ui/Coordinates.svelte";
 
-  export let candidateList: Candidate[] = [];
-  export let enhanceFn: () => any;
+  let { candidateList = [], enhanceFn, message = $bindable("") } = $props();
 
   let lat = 52.160858;
   let lng = -7.15242;
   let paymentMethods = ["paypal", "direct"];
-  let message = "Please donate";
 </script>
 
-<form
-  method="POST"
-  action="?/donate"
-  use:enhance={enhanceFn}
->
+<form method="POST" action="?/donate" use:enhance={enhanceFn}>
   <div class="field">
     <label class="label" for="amount">Enter Amount:</label>
     <input class="input" id="amount" name="amount" type="number" />

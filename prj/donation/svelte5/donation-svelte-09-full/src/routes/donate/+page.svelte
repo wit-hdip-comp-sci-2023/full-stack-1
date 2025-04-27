@@ -8,13 +8,14 @@
   import DonationList from "$lib/ui/DonationList.svelte";
   import LeafletMap from "$lib/ui/LeafletMap.svelte";
   import { onMount } from "svelte";
-  import { computeByCandidate, computeByMethod, refreshDonationMap, refreshDonationState } from "$lib/services/donation-utils";
+  import { refreshDonationMap, refreshDonationState } from "$lib/services/donation-utils";
   import type { Donation } from "$lib/types/donation-types";
-  import type { PageData } from "./$types";
+  import type { PageProps } from "./$types";
 
   subTitle.text = "Make a Donation";
 
-  let { data } = $props<{ data: PageData }>();
+  let { data }: PageProps = $props();
+  let message = $state("Please Donate!");
 
   const handleDonationSuccess = () => {
     return async ({ result }: { result: ActionResult }) => {
@@ -23,8 +24,8 @@
         currentDonations.donations.push(donation);
         map.addMarker(donation.lat, donation.lng, "");
         map.moveTo(donation.lat, donation.lng);
-        computeByMethod(currentDonations.donations);
-        computeByCandidate(currentDonations.donations, currentCandidates.candidates);
+        refreshDonationState(currentDonations.donations, currentCandidates.candidates);
+        message = `Thanks! You donated ${donation.amount} to ${donation.candidate.firstName} ${donation.candidate.lastName}`;
       }
     };
   };
@@ -32,7 +33,7 @@
   let map: LeafletMap;
 
   onMount(async () => {
-    refreshDonationState(data.donations, data.candidates);
+    await refreshDonationState(data.donations, data.candidates);
     await refreshDonationMap(map);
   });
 </script>
@@ -45,7 +46,7 @@
   </div>
   <div class="column">
     <Card title="Please Donate">
-      <DonateForm candidateList={currentCandidates.candidates} enhanceFn={handleDonationSuccess} />
+      <DonateForm candidateList={currentCandidates.candidates} enhanceFn={handleDonationSuccess} {message} />
     </Card>
   </div>
 </div>

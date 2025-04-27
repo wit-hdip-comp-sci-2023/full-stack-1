@@ -12,6 +12,7 @@ export const actions = {
     } else {
       console.log(`attempting to log in email: ${email} with password: ${password}`);
       const session = await donationService.login(email, password);
+
       if (session) {
         const userJson = JSON.stringify(session);
         cookies.set("donation-user", userJson, {
@@ -21,7 +22,6 @@ export const actions = {
           secure: !dev,
           maxAge: 60 * 60 * 24 * 7 // one week
         });
-
         throw redirect(303, "/donate");
       } else {
         throw redirect(307, "/");

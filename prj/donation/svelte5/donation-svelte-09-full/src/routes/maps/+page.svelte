@@ -4,7 +4,7 @@
   import Card from "$lib/ui/Card.svelte";
   import LeafletMap from "$lib/ui/LeafletMap.svelte";
   import { onMount } from "svelte";
-  import type { PageProps } from "../$types";
+  import type { PageProps } from "./$types";
 
   subTitle.text = "Donations Geo Data";
   let map: LeafletMap;

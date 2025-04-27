@@ -9,10 +9,8 @@ const candidateSchema = new mongoose.Schema<Candidate>({
 
 let CandidateMongoose: Model<Candidate>;
 try {
-  // Try to get the existing model
   CandidateMongoose = mongoose.model<Candidate>("Candidate");
 } catch {
-  // Model doesn't exist, create it
   CandidateMongoose = mongoose.model<Candidate>("Candidate", candidateSchema);
 }
 

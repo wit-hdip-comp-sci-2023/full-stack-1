@@ -32,6 +32,7 @@ export function computeByCandidate(donationList: Donation[], candidates: Candida
 }
 
 export async function refreshDonationMap(map: LeafletMap) {
+  // const donations = await donationService.getDonations(loggedInUser.token);
   currentDonations.donations.forEach((donation: Donation) => {
     if (typeof donation.candidate !== "string") {
       const popup = `${donation.candidate.firstName} ${donation.candidate.lastName}: €${donation.amount}`;

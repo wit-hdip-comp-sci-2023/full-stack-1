@@ -6,4 +6,4 @@ export const load: PageServerLoad = async () => {
     donations: await donationService.getDonations(),
     candidates: await donationService.getCandidates()
   };
-};
+}
