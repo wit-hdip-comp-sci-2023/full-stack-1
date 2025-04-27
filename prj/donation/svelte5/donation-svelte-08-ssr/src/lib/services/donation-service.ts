@@ -42,7 +42,8 @@ export const donationService = {
     try {
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
       const response = await axios.post(this.baseUrl + "/api/candidates/" + donation.candidate + "/donations", donation);
-      return response.status == 200;
+      // response.status == 200;
+      return response.data
     } catch (error) {
       console.log(error);
       return false;

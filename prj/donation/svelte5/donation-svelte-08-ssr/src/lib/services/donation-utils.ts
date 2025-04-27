@@ -52,9 +52,9 @@ export function clearDonationState() {
   loggedInUser._id = "";
 }
 
-export async function refreshDonationState(donations?: Donation[], candidates?: Candidate[]) {
-  if (!donations) currentDonations.donations = await donationService.getDonations(loggedInUser.token);
-  if (!candidates) currentCandidates.candidates = await donationService.getCandidates(loggedInUser.token);
+export async function refreshDonationState(donations: Donation[], candidates: Candidate[]) {
+  currentDonations.donations = donations;
+  currentCandidates.candidates = candidates;
   computeByMethod(currentDonations.donations);
   computeByCandidate(currentDonations.donations, currentCandidates.candidates);
 }

@@ -3,10 +3,11 @@
   // @ts-ignore
   import Chart from "svelte-frappe-charts";
   import Card from "$lib/ui/Card.svelte";
+  import type { PageProps } from "./$types";
 
   import { refreshDonationState } from "$lib/services/donation-utils";
 
-  let data = $props();
+  let { data }: PageProps = $props();
   refreshDonationState(data.donations, data.candidates);
 </script>
 

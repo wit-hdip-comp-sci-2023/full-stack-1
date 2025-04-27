@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { curentDataSets, loggedInUser, subTitle } from "$lib/runes.svelte";
+  import { curentDataSets, subTitle } from "$lib/runes.svelte";
   import Card from "$lib/ui/Card.svelte";
   import DonateForm from "./DonateForm.svelte";
   // @ts-ignore
@@ -8,14 +8,12 @@
   import LeafletMap from "$lib/ui/LeafletMap.svelte";
   import { onMount } from "svelte";
   import type { Donation } from "$lib/types/donation-types";
-  import { donationService } from "$lib/services/donation-service";
-    import { refreshDonationMap } from "$lib/services/donation-utils";
+  import { refreshDonationMap } from "$lib/services/donation-utils";
 
   subTitle.text = "Make a Donation";
-
   let map: LeafletMap;
 
-  function donationMade(donation:Donation) {
+  function donationMade(donation: Donation) {
     map.addMarker(donation.lat, donation.lng, "");
     map.moveTo(donation.lat, donation.lng);
   }
@@ -33,7 +31,7 @@
   </div>
   <div class="column">
     <Card title="Please Donate">
-      <DonateForm donationEvent={donationMade}/>
+      <DonateForm donationEvent={donationMade} />
     </Card>
   </div>
 </div>

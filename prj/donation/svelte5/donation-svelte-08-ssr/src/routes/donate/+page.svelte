@@ -9,18 +9,23 @@
   import LeafletMap from "$lib/ui/LeafletMap.svelte";
   import { onMount } from "svelte";
   import { refreshDonationMap, refreshDonationState } from "$lib/services/donation-utils";
+  import type { Donation } from "$lib/types/donation-types";
+  import type { PageProps } from "./$types";
 
   subTitle.text = "Make a Donation";
 
-  let data = $props();
+  let { data }: PageProps = $props();
+  let message = $state("Please Donate!");
 
   const handleDonationSuccess = () => {
     return async ({ result }: { result: ActionResult }) => {
       if (result.type === "success") {
-        await refreshDonationState();
-        const latestDonation = currentDonations.donations[currentDonations.donations.length - 1];
-        map.addMarker(latestDonation.lat, latestDonation.lng, "");
-        map.moveTo(latestDonation.lat, latestDonation.lng);
+        const donation = result.data as Donation;
+        currentDonations.donations.push(donation);
+        map.addMarker(donation.lat, donation.lng, "");
+        map.moveTo(donation.lat, donation.lng);
+        refreshDonationState(currentDonations.donations, currentCandidates.candidates);
+        message = `Thanks! You donated ${donation.amount} to ${donation.candidate.firstName} ${donation.candidate.lastName}`;
       }
     };
   };
@@ -41,7 +46,7 @@
   </div>
   <div class="column">
     <Card title="Please Donate">
-      <DonateForm candidateList={currentCandidates.candidates} enhanceFn={handleDonationSuccess} />
+      <DonateForm candidateList={currentCandidates.candidates} enhanceFn={handleDonationSuccess} {message} />
     </Card>
   </div>
 </div>

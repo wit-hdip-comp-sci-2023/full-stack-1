@@ -31,15 +31,15 @@ export function computeByCandidate(donationList: Donation[], candidates: Candida
     });
 }
 
-export async function refreshDonationMap (map:LeafletMap) {
+export async function refreshDonationMap(map: LeafletMap) {
     if (!loggedInUser.token) donationService.restoreSession();
     const donations = await donationService.getDonations(loggedInUser.token);
     donations.forEach((donation: Donation) => {
         if (typeof donation.candidate !== "string") {
-          const popup = `${donation.candidate.firstName} ${donation.candidate.lastName}: €${donation.amount}`;
-          map.addMarker(donation.lat, donation.lng, popup);
+            const popup = `${donation.candidate.firstName} ${donation.candidate.lastName}: €${donation.amount}`;
+            map.addMarker(donation.lat, donation.lng, popup);
         }
-      });
-      const lastDonation = donations[donations.length - 1];
-      if (lastDonation) map.moveTo(lastDonation.lat, lastDonation.lng);
+    });
+    const lastDonation = donations[donations.length - 1];
+    if (lastDonation) map.moveTo(lastDonation.lat, lastDonation.lng);
 }

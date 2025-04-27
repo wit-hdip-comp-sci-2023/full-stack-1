@@ -43,14 +43,18 @@
     control = leaflet.control.layers(baseLayers, overlays).addTo(imap);
   });
 
-  export function addMarker(lat: number, lng: number, popupText: string) {
+  export async function addMarker(lat: number, lng: number, popupText: string) {
+    const leaflet = await import("leaflet");
+    L = leaflet.default;
     const marker = L.marker([lat, lng]).addTo(imap);
     const popup = L.popup({ autoClose: false, closeOnClick: false });
     popup.setContent(popupText);
     marker.bindPopup(popup);
   }
 
-  export function moveTo(lat: number, lng: number) {
+  export async function moveTo(lat: number, lng: number) {
+    const leaflet = await import("leaflet");
+    L = leaflet.default;
     imap.flyTo({ lat: lat, lng: lng });
   }
 </script>
